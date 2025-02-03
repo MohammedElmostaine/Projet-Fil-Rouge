@@ -34,7 +34,7 @@
 - Design : Responsive pour une utilisation sur mobiles, tablettes et ordinateurs.
 
 ### Back-end
-- Langages : Node.js, PHP ou Python (Django/Flask).
+- Langages :  PHP  laravel , sql , blade.
 - API RESTful pour la communication entre front-end et back-end.
 
 ### Base de données
