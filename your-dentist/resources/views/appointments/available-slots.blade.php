@@ -15,8 +15,27 @@
 
                 <!-- Appointment Booking Form -->
                 <div class="max-w-3xl mx-auto">
-                    <form action="{{ route('appointments.book') }}" method="POST" class="space-y-8">
+                    <!-- Date Selection Form -->
+                    <form id="dateSelectionForm" action="{{ route('appointments.slots') }}" method="GET" class="mb-8">
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            <label for="date" class="block text-base font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-calendar-alt mr-2 text-primary"></i>Select Date
+                            </label>
+                            <input type="date" 
+                                id="date" 
+                                name="date" 
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-gray-700"
+                                min="{{ date('Y-m-d') }}"
+                                value="{{ old('date', $selectedDate->format('Y-m-d')) }}"
+                                onchange="document.getElementById('dateSelectionForm').submit()"
+                                required>
+                        </div>
+                    </form>
+
+                    <!-- Appointment Booking Form -->
+                    <form id="appointmentForm" action="{{ route('appointments.book') }}" method="POST" class="space-y-8">
                         @csrf
+                        <input type="hidden" name="date" value="{{ old('date', $selectedDate->format('Y-m-d')) }}">
 
                         <!-- Error Messages -->
                         @if(session('error'))
@@ -50,38 +69,22 @@
                             </div>
                         @endif
 
-                        <!-- Date and Time Selection -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label for="date" class="block text-base font-semibold text-gray-700 mb-3">
-                                    <i class="fas fa-calendar-alt mr-2 text-primary"></i>Select Date
-                                </label>
-                                <input type="date" 
-                                    id="date" 
-                                    name="date" 
-                                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-gray-700"
-                                    min="{{ date('Y-m-d') }}"
-                                    value="{{ old('date', $selectedDate->format('Y-m-d')) }}"
-                                    onchange="this.form.submit()"
-                                    required>
-                            </div>
-
-                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <label for="time" class="block text-base font-semibold text-gray-700 mb-3">
-                                    <i class="fas fa-clock mr-2 text-primary"></i>Select Time
-                                </label>
-                                <select id="time" 
-                                    name="time" 
-                                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-gray-700"
-                                    required>
-                                    <option value="">Choose a time slot</option>
-                                    @foreach($availableSlots as $slot)
-                                        <option value="{{ $slot['time'] }}" {{ old('time') == $slot['time'] ? 'selected' : '' }}>
-                                            {{ $slot['formatted_time'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                        <!-- Time Selection -->
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            <label for="time" class="block text-base font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-clock mr-2 text-primary"></i>Select Time
+                            </label>
+                            <select id="time" 
+                                name="time" 
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-gray-700"
+                                required>
+                                <option value="">Choose a time slot</option>
+                                @foreach($availableSlots as $slot)
+                                    <option value="{{ $slot['time'] }}" {{ old('time') == $slot['time'] ? 'selected' : '' }}>
+                                        {{ $slot['formatted_time'] }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <!-- Description -->
@@ -130,79 +133,34 @@
     </div>
 </div>
 
+@if(app()->environment('local'))
+<div class="mt-8 p-4 bg-gray-100 rounded-lg">
+    <h3 class="text-lg font-semibold text-gray-700">Debug Information</h3>
+    <div class="mt-2">
+        <p>Selected Date: {{ $selectedDate->format('Y-m-d') }}</p>
+        <p>Day of Week: {{ $dayOfWeek }} (1 = Monday, 7 = Sunday)</p>
+        <p>Has Office Hours: {{ $hasOfficeHours ? 'Yes' : 'No' }}</p>
+        <p>Booked Slots Count: {{ count($bookedSlots) }}</p>
+        <p>Available Slots Count: {{ count($availableSlots) }}</p>
+        
+        @if(count($availableSlots) > 0 && isset($availableSlots[0]['all_debug']))
+            <h4 class="mt-3 font-semibold">Debug Log:</h4>
+            <pre class="mt-1 bg-white p-2 rounded text-xs">{{ json_encode($availableSlots[0]['all_debug'], JSON_PRETTY_PRINT) }}</pre>
+        @endif
+    </div>
+</div>
+@endif
+
 @endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
-    const form = document.getElementById('appointmentForm');
-    let bookedSlots = {};
+    const appointmentForm = document.getElementById('appointmentForm');
 
-    // Time slots available (9 AM to 5 PM, 1-hour intervals)
-    const timeSlots = [
-        '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'
-    ];
-
-    // Fetch booked slots when date changes
-    dateInput.addEventListener('change', async function() {
-        const selectedDate = this.value;
-        if (!selectedDate) return;
-
-        try {
-            const response = await fetch(`/api/booked-slots?start_date=${selectedDate}&end_date=${selectedDate}`);
-            const data = await response.json();
-            bookedSlots = data;
-            updateTimeSlots(selectedDate);
-        } catch (error) {
-            console.error('Error fetching booked slots:', error);
-        }
-    });
-
-    // Update available time slots
-    function updateTimeSlots(selectedDate) {
-        timeSelect.innerHTML = '<option value="">Choose a time slot</option>';
-        
-        const today = new Date().toISOString().split('T')[0];
-        const now = new Date();
-        const currentHour = now.getHours();
-
-        timeSlots.forEach(time => {
-            const [hours] = time.split(':');
-            const isToday = selectedDate === today;
-            const isPastTime = isToday && parseInt(hours) <= currentHour;
-            const isBooked = bookedSlots[selectedDate]?.includes(time);
-
-            if (!isPastTime && !isBooked) {
-                const option = document.createElement('option');
-                option.value = time;
-                option.textContent = formatTime(time);
-                timeSelect.appendChild(option);
-            }
-        });
-
-        if (timeSelect.options.length === 1) {
-            const option = document.createElement('option');
-            option.value = "";
-            option.textContent = "No available slots";
-            option.disabled = true;
-            timeSelect.innerHTML = '';
-            timeSelect.appendChild(option);
-        }
-    }
-
-    // Format time to AM/PM
-    function formatTime(time) {
-        const [hours, minutes] = time.split(':');
-        const hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const formattedHour = hour % 12 || 12;
-        return `${formattedHour}:${minutes} ${ampm}`;
-    }
-
-    // Form submission
-    form.addEventListener('submit', async function(e) {
+    // Form submission validation
+    appointmentForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const formData = new FormData(this);
@@ -211,10 +169,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Check if slot is still available
         try {
-            const response = await fetch(`/api/booked-slots?start_date=${selectedDate}&end_date=${selectedDate}`);
+            const response = await fetch(`/api/booked-slots?date=${selectedDate}`);
             const data = await response.json();
             
-            if (data[selectedDate]?.includes(selectedTime)) {
+            // Check if the selected time is in the booked slots
+            const isBooked = data.bookedSlots.some(slot => {
+                const slotTime = new Date(slot.start_datetime).toTimeString().substring(0, 5);
+                return slotTime === selectedTime;
+            });
+            
+            if (isBooked) {
                 showBookedModal();
                 return;
             }
@@ -223,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.submit();
         } catch (error) {
             console.error('Error checking slot availability:', error);
+            this.submit(); // Submit anyway if the check fails
         }
     });
 });

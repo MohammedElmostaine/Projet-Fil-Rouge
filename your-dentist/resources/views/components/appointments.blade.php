@@ -25,7 +25,7 @@
                                 {{ \Carbon\Carbon::parse($appointment->start_datetime)->format('F j, Y - g:i A') }}
                             </div>
                             <div class="flex space-x-2">
-                                <a href="{{ route('appointments.available') }}" class="text-sm bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded">
+                                <a href="{{ route('appointments.slots') }}" class="text-sm bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded">
                                     Reschedule
                                 </a>
                                 <form action="{{ route('appointments.cancel', $appointment->id) }}" method="POST" class="inline">
@@ -44,7 +44,7 @@
                 <!-- No appointments message (shown when no appointments) -->
                 <div class="text-center py-4">
                     <p class="text-gray-600">No upcoming appointments.</p>
-                    <a href="{{ route('appointments.available') }}" class="mt-2 bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md inline-flex items-center">
+                    <a href="{{ route('appointments.slots') }}" class="mt-2 bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md inline-flex items-center">
                         <i class="fas fa-calendar-plus mr-2"></i> Schedule New Appointment
                     </a>
                 </div>

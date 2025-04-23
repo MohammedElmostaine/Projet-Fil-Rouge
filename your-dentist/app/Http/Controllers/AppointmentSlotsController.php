@@ -34,6 +34,12 @@ class AppointmentSlotsController extends Controller
         // Get all booked slots for the selected date
         $bookedSlots = $this->getBookedSlotsForDate($selectedDate);
         
+        // Debug: Print the day of week for the selected date
+        $dayOfWeek = $selectedDate->dayOfWeek;
+        
+        // Debug: Check if we have office hours for this day
+        $hasOfficeHours = isset($officeHours[$dayOfWeek]);
+
         // Get available time slots for the selected date
         $availableSlots = $this->getAvailableSlots($selectedDate, $officeHours, $bookedSlots);
         
@@ -44,7 +50,10 @@ class AppointmentSlotsController extends Controller
             'selectedDate',
             'officeHours',
             'availableSlots',
-            'patient'
+            'patient',
+            'dayOfWeek',
+            'hasOfficeHours',
+            'bookedSlots'
         ));
     }
 
@@ -55,19 +64,40 @@ class AppointmentSlotsController extends Controller
     {
         $dayOfWeek = $date->dayOfWeek;
         $availableSlots = [];
+        $debugInfo = [];
 
         // Return empty array if weekend
         if ($dayOfWeek == 0 || $dayOfWeek == 6) {
+            $debugInfo[] = "Weekend day (dayOfWeek: {$dayOfWeek}), no slots available";
             return $availableSlots;
         }
 
         // Only process if we have office hours for this day
         if (isset($officeHours[$dayOfWeek])) {
+            $now = Carbon::now();
+            
             foreach ($officeHours[$dayOfWeek] as $time) {
                 $slotDateTime = Carbon::parse($date->format('Y-m-d') . ' ' . $time);
                 
+                // For future dates, no slots should be considered "past"
+                $isPast = false;
+                if ($date->format('Y-m-d') === $now->format('Y-m-d')) {
+                    // Only check "isPast" for today
+                    $isPast = $slotDateTime->lt($now);
+                }
+                
+                $slotDebugInfo = [
+                    'time' => $time,
+                    'date_time' => $slotDateTime->format('Y-m-d H:i'),
+                    'is_past' => $isPast,
+                    'selected_date' => $date->format('Y-m-d'),
+                    'current_date' => $now->format('Y-m-d')
+                ];
+                
                 // Skip if slot is in the past
-                if ($slotDateTime->isPast()) {
+                if ($isPast) {
+                    $slotDebugInfo['skipped_reason'] = 'Time is in the past';
+                    $debugInfo[] = $slotDebugInfo;
                     continue;
                 }
                 
@@ -76,13 +106,35 @@ class AppointmentSlotsController extends Controller
                     return Carbon::parse($appointment->start_datetime)->format('H:i') === $slotDateTime->format('H:i');
                 });
                 
+                $slotDebugInfo['is_booked'] = $isBooked;
+                
                 if (!$isBooked) {
                     $availableSlots[] = [
                         'time' => $time,
-                        'formatted_time' => $slotDateTime->format('g:i A')
+                        'formatted_time' => $slotDateTime->format('g:i A'),
+                        'debug' => $slotDebugInfo
                     ];
+                } else {
+                    $slotDebugInfo['skipped_reason'] = 'Slot is already booked';
+                    $debugInfo[] = $slotDebugInfo;
                 }
             }
+        } else {
+            $debugInfo[] = "No office hours defined for day {$dayOfWeek}";
+        }
+
+        // Add debug info to the first slot if available
+        if (!empty($availableSlots)) {
+            $availableSlots[0]['all_debug'] = $debugInfo;
+        } else {
+            // Even if there are no available slots, we need to return the debug info
+            return [
+                [
+                    'time' => null,
+                    'formatted_time' => 'No available slots',
+                    'all_debug' => $debugInfo
+                ]
+            ];
         }
 
         return $availableSlots;
@@ -93,10 +145,20 @@ class AppointmentSlotsController extends Controller
      */
     private function getBookedSlotsForDate($date)
     {
-        return AppointmentRequest::where('start_datetime', '>=', $date->startOfDay())
+        // Get appointment requests that are not rejected
+        $appointmentRequests = AppointmentRequest::where('start_datetime', '>=', $date->startOfDay())
             ->where('start_datetime', '<=', $date->copy()->endOfDay())
             ->where('status', '!=', 'Rejected')
             ->get();
+        
+        // Get confirmed appointments
+        $appointments = \App\Models\Appointment::where('start_datetime', '>=', $date->startOfDay())
+            ->where('start_datetime', '<=', $date->copy()->endOfDay())
+            ->where('status', '!=', 'Cancelled')
+            ->get();
+        
+        // Combine both collections
+        return $appointmentRequests->concat($appointments);
     }
 
     /**
@@ -175,9 +237,45 @@ class AppointmentSlotsController extends Controller
             return false;
         }
 
-        // Check if there's any existing appointment
-        return !AppointmentRequest::where('start_datetime', $dateTime)
+        // Check if there's any existing appointment request
+        $hasAppointmentRequest = AppointmentRequest::where('start_datetime', $dateTime)
             ->where('status', '!=', 'Rejected')
             ->exists();
+        
+        if ($hasAppointmentRequest) {
+            return false;
+        }
+        
+        // Check if there's any existing confirmed appointment
+        $hasAppointment = \App\Models\Appointment::where('start_datetime', $dateTime)
+            ->where('status', '!=', 'Cancelled')
+            ->exists();
+        
+        return !$hasAppointment;
+    }
+
+    /**
+     * API endpoint to get booked slots for a specific date
+     */
+    public function getBookedSlots(Request $request)
+    {
+        $date = $request->input('date') 
+            ? Carbon::parse($request->input('date'))
+            : Carbon::now();
+
+        $bookedSlots = $this->getBookedSlotsForDate($date);
+        
+        return response()->json([
+            'date' => $date->format('Y-m-d'),
+            'bookedSlots' => $bookedSlots->map(function($slot) {
+                return [
+                    'id' => $slot->id,
+                    'start_datetime' => Carbon::parse($slot->start_datetime)->format('Y-m-d H:i:s'),
+                    'end_datetime' => Carbon::parse($slot->end_datetime)->format('Y-m-d H:i:s'),
+                    'type' => $slot instanceof AppointmentRequest ? 'request' : 'appointment',
+                    'status' => $slot->status
+                ];
+            })
+        ]);
     }
 }

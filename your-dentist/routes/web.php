@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Available appointment slots - MAKE SURE THIS COMES BEFORE appointments/{id} routes!
     Route::get('/appointments/available', [AppointmentSlotsController::class, 'index'])
-        ->name('appointments.available');
+        ->name('appointments.slots');
     
     // Book appointment
     Route::post('/appointments/book', [AppointmentSlotsController::class, 'book'])
