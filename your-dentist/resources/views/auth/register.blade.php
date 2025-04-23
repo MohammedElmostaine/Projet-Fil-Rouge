@@ -58,8 +58,28 @@
             <!-- Registration Form -->
             <form action="{{ route('register.post') }}" method="POST">
                 @csrf
-                <!-- Full Name Input -->
                 
+                @if(session('error'))
+                    <div class="mb-4 p-4 rounded-lg bg-red-50 text-red-600">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                <!-- Validation Errors -->
+                @if ($errors->any())
+                    <div class="mb-4 p-4 rounded-lg bg-red-50">
+                        <div class="font-medium text-red-600">
+                            Please fix the following errors:
+                        </div>
+                        <ul class="mt-3 list-disc list-inside text-sm text-red-600">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <!-- Full Name Input -->
                 <div class="mb-5">
                     <label for="fullName" class="block text-sm font-medium text-darkText mb-2">Full Name</label>
                     <div class="relative">
@@ -70,10 +90,14 @@
                             type="text" 
                             id="fullName" 
                             name="fullName" 
-                            class="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
+                            value="{{ old('fullName') }}"
+                            class="block w-full pl-10 pr-4 py-3 border @error('fullName') border-red-500 @else border-gray-200 @enderror rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
                             placeholder="John Smith"
                             required>
                     </div>
+                    @error('fullName')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 
                 <!-- Email Input -->
@@ -87,10 +111,14 @@
                             type="email" 
                             id="email" 
                             name="email" 
-                            class="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
+                            value="{{ old('email') }}"
+                            class="block w-full pl-10 pr-4 py-3 border @error('email') border-red-500 @else border-gray-200 @enderror rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
                             placeholder="your.email@example.com"
                             required>
                     </div>
+                    @error('email')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 
                 <!-- Phone Number Input -->
@@ -104,10 +132,59 @@
                             type="tel" 
                             id="phone" 
                             name="phone" 
-                            class="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
+                            value="{{ old('phone') }}"
+                            class="block w-full pl-10 pr-4 py-3 border @error('phone') border-red-500 @else border-gray-200 @enderror rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
                             placeholder="(123) 456-7890"
                             required>
                     </div>
+                    @error('phone')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Date of Birth Input -->
+                <div class="mb-5">
+                    <label for="date_of_birth" class="block text-sm font-medium text-darkText mb-2">Date of Birth</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-calendar text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="date" 
+                            id="date_of_birth" 
+                            name="date_of_birth" 
+                            value="{{ old('date_of_birth') }}"
+                            class="block w-full pl-10 pr-4 py-3 border @error('date_of_birth') border-red-500 @else border-gray-200 @enderror rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
+                            required>
+                    </div>
+                    @error('date_of_birth')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Gender Input -->
+                <div class="mb-5">
+                    <label for="gender" class="block text-sm font-medium text-darkText mb-2">Gender</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-venus-mars text-gray-400"></i>
+                        </div>
+                        <select 
+                            id="gender" 
+                            name="gender" 
+                            class="block w-full pl-10 pr-4 py-3 border @error('gender') border-red-500 @else border-gray-200 @enderror rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out appearance-none bg-white" 
+                            required>
+                            <option value="">Select gender</option>
+                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </div>
+                    @error('gender')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 
                 <!-- Password Input -->
@@ -121,7 +198,7 @@
                             type="password" 
                             id="password" 
                             name="password" 
-                            class="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
+                            class="block w-full pl-10 pr-10 py-3 border @error('password') border-red-500 @else border-gray-200 @enderror rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
                             placeholder="Create a strong password"
                             required>
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -130,24 +207,30 @@
                             </button>
                         </div>
                     </div>
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                     <p class="mt-1 text-xs text-gray-500">Password must be at least 8 characters long with letters and numbers</p>
                 </div>
                 
                 <!-- Confirm Password Input -->
                 <div class="mb-5">
-                    <label for="confirmPassword" class="block text-sm font-medium text-darkText mb-2">Confirm Password</label>
+                    <label for="password_confirmation" class="block text-sm font-medium text-darkText mb-2">Confirm Password</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-lock text-gray-400"></i>
                         </div>
                         <input 
                             type="password" 
-                            id="confirmPassword" 
-                            name="confirmPassword" 
-                            class="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
+                            id="password_confirmation" 
+                            name="password_confirmation" 
+                            class="block w-full pl-10 pr-4 py-3 border @error('password_confirmation') border-red-500 @else border-gray-200 @enderror rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out" 
                             placeholder="Confirm your password"
                             required>
                     </div>
+                    @error('password_confirmation')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 
                 <!-- Terms & Conditions -->
@@ -245,7 +328,7 @@
             
             // Form validation
             const registrationForm = document.querySelector('form');
-            const confirmPassword = document.getElementById('confirmPassword');
+            const confirmPassword = document.getElementById('password_confirmation');
             
             registrationForm.addEventListener('submit', function(event) {
                 // Password matching validation

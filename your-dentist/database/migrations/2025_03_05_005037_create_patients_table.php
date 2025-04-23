@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('role')->default('patient');
-            $table->text('medical_history')->nullable(); // JSON ou texte libre
             $table->timestamps();
         });
     }

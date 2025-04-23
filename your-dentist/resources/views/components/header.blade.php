@@ -6,7 +6,7 @@
                 <span class="text-2xl font-bold text-primary">DentalCare</span>
             </div>
             <div class="hidden md:flex items-center space-x-4">
-                <a href="index.html" class="text-secondary hover:text-primary transition">Home</a>
+                <a href="/" class="text-secondary hover:text-primary transition">Home</a>
                 <a href="#" class="text-secondary hover:text-primary transition">Profile</a>
                 <div class="relative group">
                     <button class="flex items-center text-secondary hover:text-primary transition">
@@ -24,15 +24,16 @@
                     </div>
                 </div>
             </div>
+            <!-- Make sure this button has the correct ID -->
             <button class="md:hidden text-secondary" id="mobile-menu-button">
                 <i class="fas fa-bars text-2xl"></i>
             </button>
         </div>
     </div>
-    <!-- Mobile Menu (hidden by default) -->
+    <!-- Make sure this div has the correct ID and is initially hidden -->
     <div class="hidden md:hidden bg-white border-t" id="mobile-menu">
         <div class="p-4 space-y-4">
-            <a href="index.html" class="block text-secondary hover:text-primary">Home</a>
+            <a href="/" class="block text-secondary hover:text-primary">Home</a>
             <a href="#" class="block text-secondary hover:text-primary">Profile</a>
             <a href="#" class="block text-secondary hover:text-primary">Medical Records</a>
             <a href="#" class="block text-secondary hover:text-primary">Notifications</a>
@@ -43,3 +44,14 @@
         </div>
     </div>
 </header>
+
+<script>
+    const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+    const mobileSidebar = document.getElementById('mobile-sidebar');
+    
+    if (toggleSidebarBtn && mobileSidebar) {
+        toggleSidebarBtn.addEventListener('click', function() {
+            mobileSidebar.classList.toggle('hidden');
+        });
+    }
+</script>

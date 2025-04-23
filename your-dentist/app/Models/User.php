@@ -20,6 +20,8 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
+        'date_of_birth',
+        'gender',
     ];
 
     /**
@@ -65,5 +67,35 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Get all appointments for the user through their patient profile
+     */
+    public function appointments()
+    {
+        return $this->hasManyThrough(
+            AppointmentRequest::class,
+            Patient::class,
+            'user_id', // Foreign key on patients table...
+            'patient_id', // Foreign key on appointment_requests table...
+            'id', // Local key on users table...
+            'id' // Local key on patients table...
+        );
+    }
+
+    /**
+     * Get all appointment requests for the user through their patient profile
+     */
+    public function appointmentRequests()
+    {
+        return $this->hasManyThrough(
+            AppointmentRequest::class,
+            Patient::class,
+            'user_id', // Foreign key on patients table...
+            'patient_id', // Foreign key on appointment_requests table...
+            'id', // Local key on users table...
+            'id' // Local key on patients table...
+        );
     }
 }
