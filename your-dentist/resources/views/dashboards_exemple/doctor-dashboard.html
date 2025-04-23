@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard | DentalCare Clinic</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F9BDF', // Light blue
+                        secondary: '#2C3E50', // Dark blue
+                        accent: '#E5F4FF', // Light blue background
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans text-gray-800 bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-tooth text-primary text-3xl mr-2"></i>
+                    <span class="text-2xl font-bold text-primary">DentalCare</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="text-secondary hover:text-primary transition border-b-2 border-primary">Dashboard</a>
+                    <a href="#appointments" class="text-secondary hover:text-primary transition">Appointments</a>
+                    <a href="#patients" class="text-secondary hover:text-primary transition">Patients</a>
+                    <a href="#schedule" class="text-secondary hover:text-primary transition">Schedule</a>
+                    <div class="relative group">
+                        <button class="flex items-center text-secondary hover:text-primary transition">
+                            <span class="mr-1">Dr. Sarah Johnson</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden invisible group-hover:visible transition-all z-50">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Profile Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Notifications</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-600 hover:text-white">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                <button class="md:hidden text-secondary" id="mobile-menu-button">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu (hidden by default) -->
+        <div class="hidden md:hidden bg-white border-t" id="mobile-menu">
+            <div class="p-4 space-y-4">
+                <a href="#" class="block text-secondary hover:text-primary">Dashboard</a>
+                <a href="#appointments" class="block text-secondary hover:text-primary">Appointments</a>
+                <a href="#patients" class="block text-secondary hover:text-primary">Patients</a>
+                <a href="#schedule" class="block text-secondary hover:text-primary">Schedule</a>
+                <a href="#" class="block text-secondary hover:text-primary">Profile Settings</a>
+                <a href="#" class="block text-red-600 hover:text-red-700">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-secondary">Hello, Dr. Sarah Johnson</h1>
+                        <p class="text-gray-600">Today is <span id="currentDate">2025-03-23</span> | <span id="currentTime">21:46:39</span></p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex flex-wrap gap-2">
+                        <a href="#appointments" class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md flex items-center">
+                            <i class="fas fa-calendar-day mr-2"></i> Today's Schedule
+                        </a>
+                        <a href="#add-appointment" class="bg-white border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-md flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Appointment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Sidebar - Doctor Information -->
+            <div class="lg:col-span-1">
+                <div class="mb-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-accent p-6 text-center">
+                            <div class="w-24 h-24 rounded-full bg-primary mx-auto mb-4 overflow-hidden">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Dr. Sarah Johnson" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="text-xl font-bold text-secondary">Dr. Sarah Johnson</h3>
+                            <p class="text-gray-600">Orthodontist</p>
+                        </div>
+                        <div class="p-6 border-t border-gray-200">
+                            <div class="mb-4">
+                                <h4 class="text-sm text-gray-500 mb-1">Today's Appointments</h4>
+                                <p class="font-semibold">8 Scheduled</p>
+                            </div>
+                            <div class="mb-4">
+                                <h4 class="text-sm text-gray-500 mb-1">Pending Reviews</h4>
+                                <p class="font-semibold">3 Patients</p>
+                            </div>
+                            <div>
+                                <h4 class="text-sm text-gray-500 mb-1">Working Hours</h4>
+                                <p class="font-semibold">9:00 AM - 5:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="mb-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-secondary text-white px-6 py-4">
+                            <h2 class="text-lg font-semibold">Quick Stats</h2>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 p-6">
+                            <div class="bg-accent rounded-lg p-4 text-center">
+                                <p class="text-2xl font-bold text-primary">24</p>
+                                <p class="text-sm text-gray-600">This Week</p>
+                            </div>
+                            <div class="bg-accent rounded-lg p-4 text-center">
+                                <p class="text-2xl font-bold text-primary">96</p>
+                                <p class="text-sm text-gray-600">This Month</p>
+                            </div>
+                            <div class="bg-accent rounded-lg p-4 text-center">
+                                <p class="text-2xl font-bold text-primary">3</p>
+                                <p class="text-sm text-gray-600">New Patients</p>
+                            </div>
+                            <div class="bg-accent rounded-lg p-4 text-center">
+                                <p class="text-2xl font-bold text-green-600">92%</p>
+                                <p class="text-sm text-gray-600">Satisfaction</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mb-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-primary text-white px-6 py-4">
+                            <h2 class="text-lg font-semibold">Quick Actions</h2>
+                        </div>
+                        <div class="p-6">
+                            <ul class="space-y-4">
+                                <li>
+                                    <a href="#" class="flex items-center text-secondary hover:text-primary">
+                                        <i class="fas fa-file-prescription mr-3 text-primary"></i>
+                                        <span>Write Prescription</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center text-secondary hover:text-primary">
+                                        <i class="fas fa-notes-medical mr-3 text-primary"></i>
+                                        <span>View Medical Records</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center text-secondary hover:text-primary">
+                                        <i class="fas fa-calendar-alt mr-3 text-primary"></i>
+                                        <span>Adjust Schedule</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center text-secondary hover:text-primary">
+                                        <i class="fas fa-bell mr-3 text-primary"></i>
+                                        <span>Notifications (3)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3">
+                <!-- Today's Appointments Section -->
+                <div class="mb-8" id="appointments">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-primary text-white px-6 py-4 flex justify-between items-center">
+                            <h2 class="text-xl font-semibold">Today's Appointments</h2>
+                            <div class="flex gap-2">
+                                <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-filter mr-1"></i> Filter
+                                </button>
+                                <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-print mr-1"></i> Print
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="py-3 px-4 text-left">Time</th>
+                                            <th class="py-3 px-4 text-left">Patient</th>
+                                            <th class="py-3 px-4 text-left">Service</th>
+                                            <th class="py-3 px-4 text-left">Status</th>
+                                            <th class="py-3 px-4 text-left">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Appointment 1 -->
+                                        <tr class="border-b border-gray-200">
+                                            <td class="py-3 px-4">9:00 AM</td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold">John Smith</p>
+                                                        <p class="text-xs text-gray-500">ID: 10023789</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">Orthodontic Adjustment</td>
+                                            <td class="py-3 px-4">
+                                                <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full text-xs font-semibold">Confirmed</span>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex space-x-2">
+                                                    <button class="bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded text-sm">
+                                                        Start
+                                                    </button>
+                                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                                                        Reschedule
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Appointment 2 -->
+                                        <tr class="border-b border-gray-200 bg-gray-50">
+                                            <td class="py-3 px-4">10:30 AM</td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Patient" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold">Emma Wilson</p>
+                                                        <p class="text-xs text-gray-500">ID: 10023456</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">Consultation</td>
+                                            <td class="py-3 px-4">
+                                                <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full text-xs font-semibold">Pending</span>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex space-x-2">
+                                                    <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
+                                                        Accept
+                                                    </button>
+                                                    <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                                        Decline
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Appointment 3 -->
+                                        <tr class="border-b border-gray-200">
+                                            <td class="py-3 px-4">11:15 AM</td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                        <img src="https://randomuser.me/api/portraits/men/47.jpg" alt="Patient" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold">Mohammed Elmostaine</p>
+                                                        <p class="text-xs text-gray-500">ID: 10023456</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">Regular Check-up</td>
+                                            <td class="py-3 px-4">
+                                                <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full text-xs font-semibold">Confirmed</span>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex space-x-2">
+                                                    <button class="bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded text-sm">
+                                                        Start
+                                                    </button>
+                                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                                                        Reschedule
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Appointment 4 -->
+                                        <tr class="border-b border-gray-200 bg-gray-50">
+                                            <td class="py-3 px-4">2:00 PM</td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                        <img src="https://randomuser.me/api/portraits/women/35.jpg" alt="Patient" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold">Sophia Garcia</p>
+                                                        <p class="text-xs text-gray-500">ID: 10023678</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">Braces Adjustment</td>
+                                            <td class="py-3 px-4">
+                                                <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full text-xs font-semibold">Confirmed</span>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex space-x-2">
+                                                    <button class="bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded text-sm">
+                                                        Start
+                                                    </button>
+                                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                                                        Reschedule
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Medical Notes Section -->
+                <div class="mb-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-secondary text-white px-6 py-4 flex justify-between items-center">
+                            <h2 class="text-xl font-semibold">Medical Notes</h2>
+                            <button class="bg-white text-secondary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                                <i class="fas fa-plus mr-1"></i> New Note
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-6">
+                                <label for="patient" class="block text-gray-700 font-medium mb-2">Select Patient</label>
+                                <select id="patient" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                                    <option value="" selected disabled>Select a patient</option>
+                                    <option value="john-smith">John Smith (ID: 10023789)</option>
+                                    <option value="emma-wilson">Emma Wilson (ID: 10023456)</option>
+                                    <option value="mohammed-elmostaine">Mohammed Elmostaine (ID: 10023456)</option>
+                                    <option value="sophia-garcia">Sophia Garcia (ID: 10023678)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="appointment-date" class="block text-gray-700 font-medium mb-2">Appointment Date</label>
+                                <input type="date" id="appointment-date" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" value="2025-03-23">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="note-type" class="block text-gray-700 font-medium mb-2">Note Type</label>
+                                <select id="note-type" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                                    <option value="check-up">Check-up</option>
+                                    <option value="procedure">Procedure</option>
+                                    <option value="follow-up">Follow-up</option>
+                                    <option value="prescription">Prescription</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="notes" class="block text-gray-700 font-medium mb-2">Medical Notes</label>
+                                <textarea id="notes" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter detailed medical notes here..."></textarea>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="treatment-plan" class="block text-gray-700 font-medium mb-2">Treatment Plan</label>
+                                <textarea id="treatment-plan" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter treatment plan details..."></textarea>
+                            </div>
+                            
+                            <div class="flex justify-end space-x-4">
+                                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
+                                    Cancel
+                                </button>
+                                <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded">
+                                    Save Note
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Patient Records -->
+                <div class="mb-8">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-primary text-white px-6 py-4 flex justify-between items-center">
+                            <h2 class="text-xl font-semibold">Recent Patient Records</h2>
+                            <a href="#" class="text-white hover:text-accent underline">View All</a>
+                        </div>
+                        <div class="p-6">
+                            <!-- Record 1 -->
+                            <div class="flex items-start border-b border-gray-200 pb-4 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                    <img src="https://randomuser.me/api/portraits/men/47.jpg" alt="Patient" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-semibold">Mohammed Elmostaine</h4>
+                                            <p class="text-sm text-gray-500">Regular Check-up - March 10, 2025</p>
+                                        </div>
+                                        <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full text-xs font-semibold">Completed</span>
+                                    </div>
+                                    <p class="text-gray-600 mt-2">Patient reported mild sensitivity in upper right molar. Recommended desensitizing toothpaste and scheduled follow-up in 3 months.</p>
+                                    <div class="mt-2 flex gap-2">
+                                        <button class="text-primary hover:text-primary/80 text-sm">View Details</button>
+                                        <button class="text-primary hover:text-primary/80 text-sm">Edit Notes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Record 2 -->
+                            <div class="flex items-start border-b border-gray-200 pb-4 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Patient" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-semibold">Emma Wilson</h4>
+                                            <p class="text-sm text-gray-500">Braces Adjustment - March 15, 2025</p>
+                                        </div>
+                                        <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full text-xs font-semibold">Completed</span>
+                                    </div>
+                                    <p class="text-gray-600 mt-2">Adjusted upper wire and replaced elastic bands. Patient is showing good progress with alignment. Next adjustment scheduled in 4 weeks.</p>
+                                    <div class="mt-2 flex gap-2">
+                                        <button class="text-primary hover:text-primary/80 text-sm">View Details</button>
+                                        <button class="text-primary hover:text-primary/80 text-sm">Edit Notes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Record 3 -->
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-semibold">John Smith</h4>
+                                            <p class="text-sm text-gray-500">Consultation - March 20, 2025</p>
+                                        </div>
+                                        <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full text-xs font-semibold">Completed</span>
+                                    </div>
+                                    <p class="text-gray-600 mt-2">Initial consultation for orthodontic treatment. Patient interested in clear aligners. Took dental impressions and scheduled follow-up to discuss treatment options.</p>
+                                    <div class="mt-2 flex gap-2">
+                                        <button class="text-primary hover:text-primary/80 text-sm">View Details</button>
+                                        <button class="text-primary hover:text-primary/80 text-sm">Edit Notes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-secondary text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-tooth text-primary text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-white">DentalCare</span>
+                    </div>
+                    <p class="text-gray-300 mt-2">Staff Portal</p>
+                </div>
+                <div class="mb-4 md:mb-0">
+                    <h3 class="font-semibold mb-2">Support</h3>
+                    <p class="text-gray-300"><i class="fas fa-phone mr-2"></i> IT Support: (123) 456-7890</p>
+                    <p class="text-gray-300"><i class="fas fa-envelope mr-2"></i> support@dentalcare.com</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Quick Links</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white">Help Center</a>
+                        <a href="#" class="text-gray-300 hover:text-white">Staff Directory</a>
+                        <a href="#" class="text-gray-300 hover:text-white">Training</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center">
+                <p class="text-gray-400">&copy; 2025 DentalCare Clinic. All rights reserved.</p>
+                <p class="text-gray-400 mt-1">
+                    <a href="#" class="hover:text-white">Privacy Policy</a> | 
+                    <a href="#" class="hover:text-white">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile menu toggle script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Set current date and time
+            document.getElementById('currentDate').textContent = "2025-03-23";
+            document.getElementById('currentTime').textContent = "21:46:39";
+        });
+    </script>
+</body>
+</html>

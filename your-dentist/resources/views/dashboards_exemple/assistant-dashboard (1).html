@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Dashboard | DentalCare Clinic</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F9BDF', // Light blue
+                        secondary: '#2C3E50', // Dark blue
+                        accent: '#E5F4FF', // Light blue background
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans text-gray-800 bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-tooth text-primary text-3xl mr-2"></i>
+                    <span class="text-2xl font-bold text-primary">DentalCare</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="text-secondary hover:text-primary transition border-b-2 border-primary">Dashboard</a>
+                    <a href="#appointments" class="text-secondary hover:text-primary transition">Appointments</a>
+                    <a href="#reservations" class="text-secondary hover:text-primary transition">Appointment Requests</a>
+                    <a href="#patients" class="text-secondary hover:text-primary transition">Patients</a>
+                    <div class="relative group">
+                        <button class="flex items-center text-secondary hover:text-primary transition">
+                            <span class="mr-1">Emily Davis</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden invisible group-hover:visible transition-all z-50">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Profile Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Notifications</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-600 hover:text-white">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                <button class="md:hidden text-secondary" id="mobile-menu-button">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu (hidden by default) -->
+        <div class="hidden md:hidden bg-white border-t" id="mobile-menu">
+            <div class="p-4 space-y-4">
+                <a href="#" class="block text-secondary hover:text-primary">Dashboard</a>
+                <a href="#appointments" class="block text-secondary hover:text-primary">Appointments</a>
+                <a href="#reservations" class="block text-secondary hover:text-primary">Appointment Requests</a>
+                <a href="#patients" class="block text-secondary hover:text-primary">Patients</a>
+                <a href="#" class="block text-secondary hover:text-primary">Profile Settings</a>
+                <a href="#" class="block text-red-600 hover:text-red-700">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-secondary">Welcome, Emily Davis</h1>
+                        <p class="text-gray-600">
+                            Current Date and Time: <span id="currentDateTime">2025-03-23 22:38:29</span> | 
+                            Last login: <span id="lastLogin">2025-03-23 17:45:12</span>
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <div class="bg-accent rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="bg-primary rounded-full p-2 mr-3">
+                                    <i class="fas fa-calendar-check text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">Today's Appointments</p>
+                                    <p class="text-2xl font-bold text-primary">12</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Action Card 1 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white">
+                                <i class="fas fa-calendar-plus text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-secondary">New Appointment</h3>
+                                <p class="text-gray-600 text-sm">Schedule a new appointment</p>
+                            </div>
+                        </div>
+                        <button class="w-full mt-4 bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md text-sm">Create Appointment</button>
+                    </div>
+                </div>
+
+                <!-- Action Card 2 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white">
+                                <i class="fas fa-user-plus text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-secondary">New Patient</h3>
+                                <p class="text-gray-600 text-sm">Register a new patient</p>
+                            </div>
+                        </div>
+                        <button class="w-full mt-4 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm">Register Patient</button>
+                    </div>
+                </div>
+
+                <!-- Action Card 3 -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center text-white">
+                                <i class="fas fa-bell text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-secondary">Appointment Reminders</h3>
+                                <p class="text-gray-600 text-sm">Send reminders to patients</p>
+                            </div>
+                        </div>
+                        <button class="w-full mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm">Send Reminders</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointment Requests Section (Reservations) -->
+        <section id="reservations" class="mb-8">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-secondary text-white px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-xl font-semibold">Appointment Requests</h2>
+                    <div class="flex gap-2">
+                        <button class="bg-white text-secondary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                            <i class="fas fa-filter mr-1"></i> Filter
+                        </button>
+                        <button class="bg-white text-secondary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                            <i class="fas fa-download mr-1"></i> Export
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filters -->
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label for="reservation-status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <select id="reservation-status" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                                <option value="all">All Requests</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="reservation-date" class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                            <input type="date" id="reservation-date" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                        </div>
+                        <div>
+                            <label for="reservation-service" class="block text-sm font-medium text-gray-700 mb-1">Service</label>
+                            <select id="reservation-service" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                                <option value="all">All Services</option>
+                                <option value="check-up">Check-up</option>
+                                <option value="cleaning">Cleaning</option>
+                                <option value="consultation">Consultation</option>
+                                <option value="emergency">Emergency</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="reservation-doctor" class="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
+                            <select id="reservation-doctor" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                                <option value="all">All Doctors</option>
+                                <option value="dr-johnson">Dr. Sarah Johnson</option>
+                                <option value="dr-smith">Dr. John Smith</option>
+                                <option value="dr-chen">Dr. Michael Chen</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md text-sm">Apply Filters</button>
+                    </div>
+                </div>
+                
+                <!-- Appointment Requests Table -->
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-3 px-4 text-left">Request Date</th>
+                                    <th class="py-3 px-4 text-left">Patient</th>
+                                    <th class="py-3 px-4 text-left">Requested Service</th>
+                                    <th class="py-3 px-4 text-left">Preferred Date</th>
+                                    <th class="py-3 px-4 text-left">Status</th>
+                                    <th class="py-3 px-4 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Appointment Request 1 -->
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-3 px-4">Mar 22, 2025</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/women/35.jpg" alt="Patient" class="w-full h-full object-cover">
+                                            </div>
+                                            <span>Rebecca Martinez</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">Teeth Cleaning</td>
+                                    <td class="py-3 px-4">Mar 25-27, 2025 (Morning)</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <button class="bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded text-sm">
+                                            Schedule
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Appointment Request 2 -->
+                                <tr class="border-b border-gray-200 bg-gray-50">
+                                    <td class="py-3 px-4">Mar 20, 2025</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="Patient" class="w-full h-full object-cover">
+                                            </div>
+                                            <span>David Wilson</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">Consultation (Braces)</td>
+                                    <td class="py-3 px-4">Mar 28, 2025 (Afternoon)</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Pending</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <button class="bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded text-sm">
+                                            Schedule
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Appointment Request 3 -->
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-3 px-4">Mar 19, 2025</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient" class="w-full h-full object-cover">
+                                            </div>
+                                            <span>John Smith</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">Check-up & X-Ray</td>
+                                    <td class="py-3 px-4">Apr 1-5, 2025 (Any time)</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Scheduled</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                                            View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule Appointment from Request Modal -->
+        <div id="schedule-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl max-w-xl w-full p-6 m-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-secondary">Schedule Appointment</h3>
+                    <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-700 mb-2">Patient Information</h4>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/women/35.jpg" alt="Rebecca Martinez" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="font-medium">Rebecca Martinez</p>
+                            <p class="text-gray-500 text-sm">ID: 10023675 | Phone: (555) 123-7890</p>
+                        </div>
+                    </div>
+                    <div class="bg-accent p-3 rounded-md mb-4">
+                        <p class="text-sm"><strong>Requested Service:</strong> Teeth Cleaning</p>
+                        <p class="text-sm"><strong>Preferred Dates:</strong> Mar 25-27, 2025 (Morning)</p>
+                        <p class="text-sm"><strong>Additional Notes:</strong> Patient mentioned sensitivity in upper molars</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="appointment-date" class="block text-sm font-medium text-gray-700 mb-1">Appointment Date</label>
+                        <input type="date" id="appointment-date" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" value="2025-03-26">
+                    </div>
+                    <div>
+                        <label for="appointment-time" class="block text-sm font-medium text-gray-700 mb-1">Appointment Time</label>
+                        <input type="time" id="appointment-time" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" value="10:30">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="assigned-doctor" class="block text-sm font-medium text-gray-700 mb-1">Assign Doctor</label>
+                    <select id="assigned-doctor" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                        <option value="dr-johnson">Dr. Sarah Johnson - Orthodontist</option>
+                        <option value="dr-smith">Dr. John Smith - General Dentist</option>
+                        <option value="dr-chen">Dr. Michael Chen - Cosmetic Dentist</option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label for="appointment-notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea id="appointment-notes" rows="3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" placeholder="Add any additional notes..."></textarea>
+                </div>
+                <div class="flex justify-between">
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                            <span class="ml-2 text-sm text-gray-700">Notify patient by email</span>
+                        </label>
+                    </div>
+                    <div class="space-x-3">
+                        <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
+                            Cancel
+                        </button>
+                        <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded">
+                            Schedule Appointment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Section -->
+        <section id="appointments" class="mb-8">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-primary text-white px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-xl font-semibold">Appointment Management</h2>
+                    <div class="flex gap-2">
+                        <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                            <i class="fas fa-filter mr-1"></i> Filter
+                        </button>
+                        <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                            <i class="fas fa-download mr-1"></i> Export
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filters -->
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label for="appointment-date-filter" class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                            <select id="appointment-date-filter" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                                <option value="today">Today</option>
+                                <option value="tomorrow">Tomorrow</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="appointment-doctor" class="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
+                            <select id="appointment-doctor" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                                <option value="all">All Doctors</option>
+                                <option value="dr-johnson">Dr. Sarah Johnson</option>
+                                <option value="dr-smith">Dr. John Smith</option>
+                                <option value="dr-chen">Dr. Michael Chen</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="appointment-status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <select id="appointment-status" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                                <option value="all">All Status</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="appointment-patient-search" class="block text-sm font-medium text-gray-700 mb-1">Patient Search</label>
+                            <input type="text" id="appointment-patient-search" placeholder="Name or ID..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md text-sm">Apply Filters</button>
+                    </div>
+                </div>
+                
+                <!-- Appointments Table -->
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-3 px-4 text-left">Date & Time</th>
+                                    <th class="py-3 px-4 text-left">Patient</th>
+                                    <th class="py-3 px-4 text-left">Service</th>
+                                    <th class="py-3 px-4 text-left">Doctor</th>
+                                    <th class="py-3 px-4 text-left">Status</th>
+                                    <th class="py-3 px-4 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Appointment 1 -->
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-3 px-4">Mar 24, 2025<br>9:00 AM</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/47.jpg" alt="Patient" class="w-full h-full object-cover">
+                                            </div>
+                                            <span>Mohammed Elmostaine</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">Regular Check-up</td>
+                                    <td class="py-3 px-4">Dr. John Smith</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Confirmed</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs" onclick="openModifyModal()">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                            <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs" onclick="openCancelModal()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Appointment 2 -->
+                                <tr class="border-b border-gray-200 bg-gray-50">
+                                    <td class="py-3 px-4">Mar 24, 2025<br>10:30 AM</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Patient" class="w-full h-full object-cover">
+                                            </div>
+                                            <span>Emma Wilson</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">Teeth Cleaning</td>
+                                    <td class="py-3 px-4">Dr. Sarah Johnson</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Confirmed</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs" onclick="openModifyModal()">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                            <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs" onclick="openCancelModal()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Appointment 3 -->
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-3 px-4">Mar 24, 2025<br>11:15 AM</td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient" class="w-full h-full object-cover">
+                                            </div>
+                                            <span>John Smith</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">Orthodontic Adjustment</td>
+                                    <td class="py-3 px-4">Dr. Sarah Johnson</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Confirmed</span>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs" onclick="openModifyModal()">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+                                            <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs" onclick="openCancelModal()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- More appointments would go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div class="text-sm text-gray-500">
+                            Showing 1 to 3 of 12 entries
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50" disabled>Previous</button>
+                            <button class="px-3 py-1 bg-primary text-white rounded hover:bg-primary/80">1</button>
+                            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">2</button>
+                            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">3</button>
+                            <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modify Appointment Modal -->
+        <div id="modify-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 m-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-secondary">Modify Appointment</h3>
+                    <button id="close-modify-modal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/men/47.jpg" alt="Mohammed Elmostaine" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="font-medium">Mohammed Elmostaine</p>
+                            <p class="text-gray-500 text-sm">Regular Check-up with Dr. John Smith</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label for="modify-date" class="block text-sm font-medium text-gray-700 mb-1">New Date</label>
+                        <input type="date" id="modify-date" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" value="2025-03-24">
+                    </div>
+                    <div>
+                        <label for="modify-time" class="block text-sm font-medium text-gray-700 mb-1">New Time</label>
+                        <select id="modify-time" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                            <option value="09:00">9:00 AM</option>
+                            <option value="09:30">9:30 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="10:30">10:30 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="11:30">11:30 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <!-- Additional times would go here -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="modify-doctor" class="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
+                        <select id="modify-doctor" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                            <option value="dr-smith" selected>Dr. John Smith</option>
+                            <option value="dr-johnson">Dr. Sarah Johnson</option>
+                            <option value="dr-chen">Dr. Michael Chen</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="modify-notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                        <textarea id="modify-notes" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" rows="3"></textarea>
+                    </div>
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                            <span class="ml-2 text-sm text-gray-700">Send notification to patient</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
+                        Cancel
+                    </button>
+                    <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancel Appointment Modal -->
+        <div id="cancel-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 m-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-secondary">Cancel Appointment</h3>
+                    <button id="close-cancel-modal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/men/47.jpg" alt="Mohammed Elmostaine" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="font-medium">Mohammed Elmostaine</p>
+                            <p class="text-gray-500 text-sm">Regular Check-up on March 24, 2025 at 9:00 AM</p>
+                        </div>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-red-600"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">Are you sure you want to cancel this appointment?</h3>
+                                <p class="text-sm text-red-700 mt-2">This action cannot be undone. The appointment slot will be freed up and the patient will be notified.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="cancel-reason" class="block text-sm font-medium text-gray-700 mb-1">Cancellation Reason</label>
+                        <select id="cancel-reason" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                            <option value="">Select a reason</option>
+                            <option value="patient-request">Patient Request</option>
+                            <option value="doctor-unavailable">Doctor Unavailable</option>
+                            <option value="schedule-conflict">Schedule Conflict</option>
+                            <option value="emergency">Clinic Emergency</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="cancel-notes" class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+                        <textarea id="cancel-notes" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" rows="3" placeholder="Enter any additional details about the cancellation..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                            <span class="ml-2 text-sm text-gray-700">Notify patient about cancellation</span>
+                        </label>
+                    </div>
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Suggest rescheduling</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
+                        Keep Appointment
+                    </button>
+                    <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                        Confirm Cancellation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-secondary text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-tooth text-primary text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-white">DentalCare</span>
+                    </div>
+                    <p class="text-gray-300 mt-2">Staff Portal</p>
+                </div>
+                <div class="mb-4 md:mb-0">
+                    <h3 class="font-semibold mb-2">Support</h3>
+                    <p class="text-gray-300"><i class="fas fa-phone mr-2"></i> IT Support: (123) 456-7890</p>
+                    <p class="text-gray-300"><i class="fas fa-envelope mr-2"></i> support@dentalcare.com</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Quick Links</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white">Help Center</a>
+                        <a href="#" class="text-gray-300 hover:text-white">Staff Directory</a>
+                        <a href="#" class="text-gray-300 hover:text-white">Training</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center">
+                <p class="text-gray-400">&copy; 2025 DentalCare Clinic. All rights reserved.</p>
+                <p class="text-gray-400 mt-1">
+                    <a href="#" class="hover:text-white">Privacy Policy</a> | 
+                    <a href="#" class="hover:text-white">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // For demonstration purposes - show/hide modals
+            window.openModifyModal = function() {
+                document.getElementById('modify-modal').classList.remove('hidden');
+            }
+            
+            window.openCancelModal = function() {
+                document.getElementById('cancel-modal').classList.remove('hidden');
+            }
+            
+            // Close buttons for modals
+            document.getElementById('close-modify-modal')?.addEventListener('click', function() {
+                document.getElementById('modify-modal').classList.add('hidden');
+            });
+            
+            document.getElementById('close-cancel-modal')?.addEventListener('click', function() {
+                document.getElementById('cancel-modal').classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
