@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
-            $table->date('date');
-            $table->json('available_slots'); // Stocker les horaires disponibles
+            $table->foreignId('doctor_id')->constrained('users')->onDelete('cascade');
+            $table->enum('day_of_week', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->boolean('is_available')->default(true);
             $table->timestamps();
         });
     }

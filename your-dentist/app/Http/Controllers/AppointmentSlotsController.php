@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppointmentRequest;
-use App\Models\Patient;
+use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class AppointmentSlotsController extends Controller
         // Get available time slots for the selected date
         $availableSlots = $this->getAvailableSlots($selectedDate, $officeHours, $bookedSlots);
         
-        // Get user's patient record
+        // Get current user
         $patient = $this->getCurrentPatient();
         
         return view('appointments.available-slots', compact(
@@ -126,8 +126,8 @@ class AppointmentSlotsController extends Controller
                     ->with('error', 'Sorry, this time slot has just been booked. Please choose another time.');
             }
             
-            // Get the patient ID of current user
-            $patient = Patient::where('user_id', Auth::id())->firstOrFail();
+            // Get the current user
+            $patient = Auth::user();
             
             // Create new appointment request
             $appointment = new AppointmentRequest();
@@ -156,7 +156,7 @@ class AppointmentSlotsController extends Controller
      */
     private function getCurrentPatient()
     {
-        return Patient::where('user_id', Auth::id())->firstOrFail();
+        return Auth::user();
     }
 
     /**

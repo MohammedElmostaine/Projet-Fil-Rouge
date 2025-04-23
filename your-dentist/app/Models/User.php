@@ -22,6 +22,8 @@ class User extends Authenticatable
         'phone',
         'date_of_birth',
         'gender',
+        'role',
+        'specialization',
     ];
 
     /**
@@ -43,25 +45,44 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // Relationships
-    public function admin()
+    /**
+     * Check if user is an admin
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
     {
-        return $this->hasOne(Admin::class);
+        return $this->role === 'admin';
     }
 
-    public function assistant()
+    /**
+     * Check if user is a doctor
+     *
+     * @return bool
+     */
+    public function isDoctor(): bool
     {
-        return $this->hasOne(Assistant::class);
+        return $this->role === 'doctor';
     }
 
-    public function doctor()
+    /**
+     * Check if user is an assistant
+     *
+     * @return bool
+     */
+    public function isAssistant(): bool
     {
-        return $this->hasOne(Doctor::class);
+        return $this->role === 'assistant';
     }
 
-    public function patient()
+    /**
+     * Check if user is a patient
+     *
+     * @return bool
+     */
+    public function isPatient(): bool
     {
-        return $this->hasOne(Patient::class);
+        return $this->role === 'patient';
     }
 
     public function notifications()
@@ -70,32 +91,32 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all appointments for the user through their patient profile
+     * Get all appointments for the user
      */
     public function appointments()
     {
-        return $this->hasManyThrough(
-            AppointmentRequest::class,
-            Patient::class,
-            'user_id', // Foreign key on patients table...
-            'patient_id', // Foreign key on appointment_requests table...
-            'id', // Local key on users table...
-            'id' // Local key on patients table...
-        );
+        return $this->hasMany(AppointmentRequest::class, 'patient_id')
+            ->when($this->role === 'patient', function ($query) {
+                return $query->where('patient_id', $this->id);
+            })
+            ->when($this->role === 'doctor', function ($query) {
+                return $query->where('doctor_id', $this->id);
+            });
     }
 
     /**
-     * Get all appointment requests for the user through their patient profile
+     * Get appointment requests for the user
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function appointmentRequests()
     {
-        return $this->hasManyThrough(
-            AppointmentRequest::class,
-            Patient::class,
-            'user_id', // Foreign key on patients table...
-            'patient_id', // Foreign key on appointment_requests table...
-            'id', // Local key on users table...
-            'id' // Local key on patients table...
-        );
+        if ($this->role === 'patient') {
+            return $this->hasMany(AppointmentRequest::class, 'patient_id');
+        } elseif ($this->role === 'doctor') {
+            return $this->hasMany(AppointmentRequest::class, 'doctor_id');
+        }
+        
+        return $this->hasMany(AppointmentRequest::class, 'patient_id')->whereNull('id'); // Empty relation for other roles
     }
 }

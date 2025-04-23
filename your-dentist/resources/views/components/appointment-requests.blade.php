@@ -15,7 +15,7 @@
                                 <span class="font-semibold">{{ $request->description }}</span>
                             </div>
                             <p class="text-gray-600">
-                                {{ $request->doctor ? $request->doctor->user->name : 'Pending Assignment' }}
+                                {{ $request->doctor ? $request->doctor->name : 'Pending Assignment' }}
                             </p>
                         </div>
                         <div class="flex flex-col md:items-end">

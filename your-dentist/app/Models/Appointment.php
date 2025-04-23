@@ -21,16 +21,16 @@ class Appointment extends Model
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(User::class, 'patient_id')->where('role', 'patient');
     }
 
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class);
+        return $this->belongsTo(User::class, 'doctor_id')->where('role', 'doctor');
     }
 
     public function assistant()
     {
-        return $this->belongsTo(Assistant::class);
+        return $this->belongsTo(User::class, 'assistant_id')->where('role', 'assistant');
     }
 }

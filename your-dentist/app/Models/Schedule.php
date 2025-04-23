@@ -11,12 +11,14 @@ class Schedule extends Model
 
     protected $fillable = [
         'doctor_id',
-        'date',
-        'available_slots',
+        'day_of_week',
+        'start_time',
+        'end_time',
+        'is_available',
     ];
 
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class);
+        return $this->belongsTo(User::class, 'doctor_id')->where('role', 'doctor');
     }
 }
