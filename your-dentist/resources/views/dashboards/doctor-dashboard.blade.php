@@ -41,6 +41,10 @@
                             <p class="font-semibold">{{ $todayStats['appointment_count'] ?? '0' }} Scheduled</p>
                         </div>
                         <div class="mb-4">
+                            <h4 class="text-sm text-gray-500 mb-1">Scheduled Today</h4>
+                            <p class="font-semibold">{{ $todayStats['scheduled_today'] ?? '0' }} Confirmed</p>
+                        </div>
+                        <div class="mb-4">
                             <h4 class="text-sm text-gray-500 mb-1">Pending Reviews</h4>
                             <p class="font-semibold">{{ $todayStats['pending_reviews'] ?? '0' }} Patients</p>
                         </div>
@@ -68,8 +72,8 @@
                             <p class="text-sm text-gray-600">This Month</p>
                         </div>
                         <div class="bg-accent rounded-lg p-4 text-center">
-                            <p class="text-2xl font-bold text-primary">{{ $stats['new_patients'] ?? '0' }}</p>
-                            <p class="text-sm text-gray-600">New Patients</p>
+                            <p class="text-2xl font-bold text-blue-600">{{ $stats['scheduled_appointments'] ?? '0' }}</p>
+                            <p class="text-sm text-gray-600">Scheduled</p>
                         </div>
                         <div class="bg-accent rounded-lg p-4 text-center">
                             <p class="text-2xl font-bold text-green-600">{{ $stats['satisfaction_rate'] ?? '0' }}%</p>
@@ -87,6 +91,12 @@
                     </div>
                     <div class="p-6">
                         <ul class="space-y-4">
+                            <li>
+                                <a href="{{ route('doctor.appointments.all') }}" class="flex items-center text-secondary hover:text-primary">
+                                    <i class="fas fa-calendar-check mr-3 text-primary"></i>
+                                    <span>View All Appointments</span>
+                                </a>
+                            </li>
                             <li>
                                 <a href="{{ route('doctor.prescriptions.create') }}" class="flex items-center text-secondary hover:text-primary">
                                     <i class="fas fa-file-prescription mr-3 text-primary"></i>
@@ -124,9 +134,9 @@
                     <div class="bg-primary text-white px-6 py-4 flex justify-between items-center">
                         <h2 class="text-xl font-semibold">Today's Appointments</h2>
                         <div class="flex gap-2">
-                            <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
-                                <i class="fas fa-filter mr-1"></i> Filter
-                            </button>
+                            <a href="{{ route('doctor.appointments.all') }}" class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                                <i class="fas fa-calendar-alt mr-1"></i> View All Appointments
+                            </a>
                             <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
                                 <i class="fas fa-print mr-1"></i> Print
                             </button>
@@ -154,7 +164,7 @@
                                                         <img src="{{ $appointment->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="Patient" class="w-full h-full object-cover">
                                                     </div>
                                                     <div>
-                                                        <p class="font-semibold">{{ $appointment->patient->name }}</p>
+                                                        <p class="font-semibold">{{ $appointment->patient ? $appointment->patient->name : 'Unknown Patient' }}</p>
                                                         <p class="text-xs text-gray-500">ID: {{ $appointment->patient_id }}</p>
                                                     </div>
                                                 </div>
@@ -167,8 +177,8 @@
                                             </td>
                                             <td class="py-3 px-4">
                                                 <div class="flex space-x-2">
-                                                    @if($appointment->status == 'Confirmed')
-                                                        <a href="{{ route('doctor.appointments.start', $appointment->id) }}" class="bg-primary hover:bg-primary/80 text-white px-3 py-1 rounded text-sm">
+                                                    @if($appointment->status == 'Scheduled')
+                                                        <a href="{{ route('doctor.appointments.start', $appointment->id) }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
                                                             Start
                                                         </a>
                                                     @elseif($appointment->status == 'In Progress')
@@ -193,6 +203,89 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Upcoming Scheduled Appointments -->
+            <div class="mb-8">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-blue-600 text-white px-6 py-4 flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">Upcoming Scheduled Appointments</h2>
+                        <div class="flex gap-2">
+                            <a href="{{ route('doctor.appointments.all') }}" class="bg-white text-blue-600 hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                                <i class="fas fa-calendar-check mr-1"></i> View All
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="py-3 px-4 text-left">Date & Time</th>
+                                        <th class="py-3 px-4 text-left">Patient</th>
+                                        <th class="py-3 px-4 text-left">Service</th>
+                                        <th class="py-3 px-4 text-left">Scheduled By</th>
+                                        <th class="py-3 px-4 text-left">Status</th>
+                                        <th class="py-3 px-4 text-left">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        // Fallback if upcomingAppointments not provided by controller
+                                        if (!isset($upcomingAppointments)) {
+                                            $upcomingAppointments = \App\Models\Appointment::with(['patient', 'assistant'])
+                                                ->where('doctor_id', Auth::id())
+                                                ->where('status', 'Scheduled')
+                                                ->where('start_datetime', '>', now())
+                                                ->orderBy('start_datetime')
+                                                ->take(5)
+                                                ->get()
+                                                ->map(function($appt) {
+                                                    $appt->status_color = 'blue';
+                                                    return $appt;
+                                                });
+                                        }
+                                    @endphp
+                                    
+                                    @forelse($upcomingAppointments as $appointment)
+                                        <tr class="border-b border-gray-200">
+                                            <td class="py-3 px-4">{{ \Carbon\Carbon::parse($appointment->start_datetime)->format('M d, Y - g:i A') }}</td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                        <img src="{{ $appointment->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="Patient" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold">{{ $appointment->patient->name ?? 'Unknown Patient' }}</p>
+                                                        <p class="text-xs text-gray-500">ID: {{ $appointment->patient_id }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">{{ $appointment->description }}</td>
+                                            <td class="py-3 px-4">
+                                                {{ $appointment->assistant ? $appointment->assistant->name : 'System' }}
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <span class="bg-{{ $appointment->status_color }}-100 text-{{ $appointment->status_color }}-800 px-2 py-1 rounded-full text-xs font-semibold">
+                                                    {{ $appointment->status }}
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <a href="{{ route('doctor.appointments.show', $appointment->id) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm">
+                                                    View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="py-4 px-6 text-center text-gray-500">No upcoming scheduled appointments</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Pending Appointment Requests -->
             <div class="mb-8">
@@ -207,11 +300,11 @@
                                     <div class="mb-4 md:mb-0">
                                         <div class="flex items-center mb-2">
                                             <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
-                                                <img src="{{ $request->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="{{ $request->patient->name }}" class="w-full h-full object-cover">
+                                                <img src="{{ $request->patient->avatar ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="{{ $request->patient ? $request->patient->name : 'Unknown' }}" class="w-full h-full object-cover">
                                             </div>
                                             <div>
-                                                <h3 class="font-medium">{{ $request->patient->name }}</h3>
-                                                <p class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($request->start_datetime)->format('F j, Y - g:i A') }}</p>
+                                                <h3 class="font-medium">{{ $request->patient ? $request->patient->name : 'Unknown Patient' }}</h3>
+                                                <p class="text-sm text-gray-500">{{ $request->created_at->format('M d, Y') }}</p>
                                             </div>
                                         </div>
                                         <p class="text-gray-700">{{ $request->description }}</p>

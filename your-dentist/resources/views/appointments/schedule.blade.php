@@ -1,0 +1,1 @@
+<form action="{{ route('assistant.appointments.schedule.store', $patientId) }}" method="POST"> 

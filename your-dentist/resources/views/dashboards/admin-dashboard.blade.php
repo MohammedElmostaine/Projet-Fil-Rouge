@@ -76,7 +76,6 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
@@ -86,10 +85,10 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="h-10 w-10 flex-shrink-0">
-                                            <img class="h-10 w-10 rounded-full" src="{{ $member->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="{{ $member->name }}">
+                                            <img class="h-10 w-10 rounded-full" src="{{ $member->profile_photo ?? 'https://ui-avatars.com/api/?name=' . urlencode($member->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="{{ $member->name }}">
                                         </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ $member->name }}</div>
+                                            <div class="text-sm font-medium text-gray-900">{{ $member->name }} {{ $member->last_name ?? '' }}</div>
                                             <div class="text-sm text-gray-500">{{ $member->email }}</div>
                                         </div>
                                     </div>
@@ -102,14 +101,7 @@
                                         {{ ucfirst($member->role) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $member->phone }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        @if($member->status == 'active') bg-green-100 text-green-800
-                                        @else bg-red-100 text-red-800 @endif">
-                                        {{ ucfirst($member->status) }}
-                                    </span>
-                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $member->phone ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('admin.staff.edit', $member->id) }}" class="text-primary hover:text-primary-dark mr-3">Edit</a>
                                     <a href="{{ route('admin.staff.show', $member->id) }}" class="text-gray-600 hover:text-gray-900">View</a>
@@ -117,7 +109,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No staff members found</td>
+                                <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No staff members found</td>
                             </tr>
                         @endforelse
                     </tbody>

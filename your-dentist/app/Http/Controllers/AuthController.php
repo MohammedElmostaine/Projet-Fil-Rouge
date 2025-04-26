@@ -238,20 +238,46 @@ class AuthController extends Controller
     }
     
     /**
-     * Get doctor's appointments for today
+     * Get doctor's today appointments
      */
     private function getTodayDoctorAppointments()
     {
         $doctorId = Auth::id();
-        return \App\Models\AppointmentRequest::with('patient')
+        
+        // Get confirmed appointments
+        $confirmedAppointments = \App\Models\Appointment::with('patient')
             ->where('doctor_id', $doctorId)
             ->whereDate('start_datetime', today())
             ->orderBy('start_datetime')
-            ->get()
+            ->get();
+            
+        // Get appointment requests
+        $appointmentRequests = \App\Models\AppointmentRequest::with('patient')
+            ->where('doctor_id', $doctorId)
+            ->whereDate('start_datetime', today())
+            ->whereIn('status', ['Confirmed', 'Scheduled', 'Accepted'])
+            ->orderBy('start_datetime')
+            ->get();
+            
+        // Combine both collections
+        $allAppointments = $confirmedAppointments->concat($appointmentRequests)
             ->map(function($appointment) {
                 $appointment->status_color = $this->getStatusColor($appointment->status);
+                
+                // Make sure we have a valid patient with a valid name
+                if (!$appointment->patient) {
+                    $appointment->patient = (object)[
+                        'name' => 'Unknown Patient',
+                        'id' => $appointment->patient_id,
+                        'email' => 'N/A',
+                        'phone' => 'N/A'
+                    ];
+                }
+                
                 return $appointment;
             });
+            
+        return $allAppointments->sortBy('start_datetime');
     }
     
     /**
@@ -277,8 +303,14 @@ class AuthController extends Controller
         return [
             'weekly_appointments' => \App\Models\AppointmentRequest::where('doctor_id', $doctorId)
                 ->whereBetween('start_datetime', [now()->startOfWeek(), now()->endOfWeek()])
+                ->count() + 
+                \App\Models\Appointment::where('doctor_id', $doctorId)
+                ->whereBetween('start_datetime', [now()->startOfWeek(), now()->endOfWeek()])
                 ->count(),
             'monthly_appointments' => \App\Models\AppointmentRequest::where('doctor_id', $doctorId)
+                ->whereBetween('start_datetime', [now()->startOfMonth(), now()->endOfMonth()])
+                ->count() +
+                \App\Models\Appointment::where('doctor_id', $doctorId)
                 ->whereBetween('start_datetime', [now()->startOfMonth(), now()->endOfMonth()])
                 ->count(),
             'new_patients' => 12,
@@ -294,6 +326,9 @@ class AuthController extends Controller
         $doctorId = Auth::id();
         return [
             'appointment_count' => \App\Models\AppointmentRequest::where('doctor_id', $doctorId)
+                ->whereDate('start_datetime', today())
+                ->count() +
+                \App\Models\Appointment::where('doctor_id', $doctorId)
                 ->whereDate('start_datetime', today())
                 ->count(),
             'pending_reviews' => 3
@@ -313,13 +348,16 @@ class AuthController extends Controller
      */
     private function getAssistantStats()
     {
+        $today = today()->toDateString();
+        
         return [
-            'todays_appointments' => \App\Models\AppointmentRequest::whereDate('start_datetime', today())->count(),
-            'total_appointments' => \App\Models\AppointmentRequest::whereDate('start_datetime', today())->count(),
-            'checked_in' => \App\Models\AppointmentRequest::whereDate('start_datetime', today())->where('status', 'Checked-in')->count(),
-            'pending' => \App\Models\AppointmentRequest::whereDate('start_datetime', today())->where('status', 'Pending')->count(),
+            'todays_appointments' => \App\Models\Appointment::whereDate('start_datetime', $today)->count(),
+            'total_appointments' => \App\Models\Appointment::whereDate('start_datetime', $today)->count(),
+            'checked_in' => \App\Models\Appointment::whereDate('start_datetime', $today)->where('status', 'Completed')->count(),
+            'pending' => \App\Models\Appointment::whereDate('start_datetime', $today)->where('status', 'Scheduled')->count(),
             'new_requests' => \App\Models\AppointmentRequest::where('status', 'Pending')->count(),
-            'doctors_available' => User::where('role', 'doctor')->count()
+            'doctors_available' => User::where('role', 'doctor')->count(),
+            'scheduled_appointments' => \App\Models\Appointment::where('status', 'Scheduled')->count()
         ];
     }
     
@@ -335,6 +373,15 @@ class AuthController extends Controller
             ->get()
             ->map(function($request) {
                 $request->status_color = $this->getStatusColor($request->status);
+                // Make sure we have a valid patient with a valid name
+                if (!$request->patient) {
+                    $request->patient = (object)[
+                        'name' => 'Unknown Patient',
+                        'id' => $request->patient_id,
+                        'email' => 'N/A',
+                        'phone' => 'N/A'
+                    ];
+                }
                 return $request;
             });
     }
@@ -344,14 +391,39 @@ class AuthController extends Controller
      */
     private function getTodayAppointments()
     {
-        return \App\Models\AppointmentRequest::with(['patient', 'doctor'])
-            ->whereDate('start_datetime', today())
+        $today = today()->toDateString();
+        
+        // First get confirmed appointments
+        $confirmedAppointments = \App\Models\Appointment::with(['patient', 'doctor'])
+            ->whereDate('start_datetime', $today)
             ->orderBy('start_datetime')
-            ->get()
+            ->get();
+            
+        // Then get appointment requests for today
+        $appointmentRequests = \App\Models\AppointmentRequest::with(['patient', 'doctor'])
+            ->whereDate('start_datetime', $today)
+            ->orderBy('start_datetime')
+            ->get();
+            
+        // Combine both collections
+        $allAppointments = $confirmedAppointments->concat($appointmentRequests)
             ->map(function($appointment) {
                 $appointment->status_color = $this->getStatusColor($appointment->status);
+                
+                // Make sure we have a valid patient with a valid name
+                if (!$appointment->patient) {
+                    $appointment->patient = (object)[
+                        'name' => 'Unknown Patient',
+                        'id' => $appointment->patient_id,
+                        'email' => 'N/A',
+                        'phone' => 'N/A'
+                    ];
+                }
+                
                 return $appointment;
             });
+            
+        return $allAppointments->sortBy('start_datetime');
     }
     
     /**

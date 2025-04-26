@@ -122,9 +122,9 @@
                                             <td class="py-3 px-4">
                                                 <div class="flex items-center">
                                                     <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
-                                                        <img src="{{ $request->patient->user->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="Patient" class="w-full h-full object-cover">
+                                                        <img src="{{ $request->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="Patient" class="w-full h-full object-cover">
                                                     </div>
-                                                    <span>{{ $request->patient->user->name }}</span>
+                                                    <span>{{ $request->patient->name ?? 'Unknown Patient' }}</span>
                                                 </div>
                                             </td>
                                             <td class="py-3 px-4">{{ $request->description }}</td>
@@ -187,7 +187,7 @@
                                                     <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
                                                         <img src="{{ $appointment->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="Patient" class="w-full h-full object-cover">
                                                     </div>
-                                                    <span>{{ $appointment->patient->name }}</span>
+                                                    <span>{{ $appointment->patient->name ?? 'Unknown Patient' }}</span>
                                                 </div>
                                             </td>
                                             <td class="py-3 px-4">{{ $appointment->doctor ? 'Dr. ' . $appointment->doctor->name : 'Not Assigned' }}</td>
@@ -198,11 +198,11 @@
                                                 </span>
                                             </td>
                                             <td class="py-3 px-4">
-                                                @if($appointment->status == 'Confirmed')
+                                                @if($appointment->status == 'Scheduled')
                                                     <a href="{{ route('assistant.appointments.check-in', $appointment->id) }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
                                                         Check-in
                                                     </a>
-                                                @elseif($appointment->status == 'Checked-in')
+                                                @elseif($appointment->status == 'Completed')
                                                     <a href="{{ route('assistant.appointments.show', $appointment->id) }}" class="text-primary hover:text-primary-dark">
                                                         View
                                                     </a>
@@ -220,6 +220,93 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Confirmed Schedules Section -->
+            <section id="confirmed-schedules" class="mb-8">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-secondary text-white px-6 py-4 flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">Confirmed Schedules</h2>
+                        <a href="{{ route('assistant.appointments.scheduled') }}" class="bg-white text-secondary hover:bg-gray-100 px-3 py-1 rounded text-sm">
+                            <i class="fas fa-calendar-check mr-1"></i> View All Scheduled
+                        </a>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="py-3 px-4 text-left">Date & Time</th>
+                                        <th class="py-3 px-4 text-left">Patient</th>
+                                        <th class="py-3 px-4 text-left">Doctor</th>
+                                        <th class="py-3 px-4 text-left">Service</th>
+                                        <th class="py-3 px-4 text-left">Status</th>
+                                        <th class="py-3 px-4 text-left">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $scheduledAppointments = \App\Models\Appointment::with(['patient', 'doctor'])
+                                            ->where('status', 'Scheduled')
+                                            ->orderBy('start_datetime')
+                                            ->take(5)
+                                            ->get()
+                                            ->map(function($appointment) {
+                                                switch ($appointment->status) {
+                                                    case 'Scheduled': $appointment->status_color = 'blue'; break;
+                                                    case 'Completed': $appointment->status_color = 'green'; break;
+                                                    default: $appointment->status_color = 'gray';
+                                                }
+                                                return $appointment;
+                                            });
+                                    @endphp
+                                    
+                                    @forelse($scheduledAppointments as $appointment)
+                                        <tr class="border-b border-gray-200">
+                                            <td class="py-3 px-4">{{ \Carbon\Carbon::parse($appointment->start_datetime)->format('M d, Y - g:i A') }}</td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                                                        <img src="{{ $appointment->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" alt="Patient" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <span>{{ $appointment->patient->name ?? 'Unknown Patient' }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4">{{ $appointment->doctor ? 'Dr. ' . $appointment->doctor->name : 'Not Assigned' }}</td>
+                                            <td class="py-3 px-4">{{ $appointment->description }}</td>
+                                            <td class="py-3 px-4">
+                                                <span class="bg-{{ $appointment->status_color }}-100 text-{{ $appointment->status_color }}-800 px-2 py-1 rounded-full text-xs">
+                                                    {{ $appointment->status }}
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-4">
+                                                <div class="flex space-x-2">
+                                                    @if($appointment->status == 'Scheduled')
+                                                        <a href="{{ route('assistant.appointments.check-in', $appointment->id) }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
+                                                            Check-in
+                                                        </a>
+                                                    @endif
+                                                    <a href="{{ route('assistant.appointments.show', $appointment->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                                        View
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="py-6 text-center text-gray-500">No confirmed schedules found</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <a href="{{ route('assistant.appointments.scheduled') }}" class="text-primary hover:text-primary-dark font-medium">
+                                View All Confirmed Schedules <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -243,12 +330,16 @@
                             <span class="font-semibold">{{ $stats['checked_in'] ?? '0' }}</span>
                         </div>
                         <div class="flex justify-between items-center pb-3 border-b border-gray-200">
-                            <span class="text-gray-600">Pending</span>
+                            <span class="text-gray-600">Today's Pending</span>
                             <span class="font-semibold">{{ $stats['pending'] ?? '0' }}</span>
                         </div>
                         <div class="flex justify-between items-center pb-3 border-b border-gray-200">
-                            <span class="text-gray-600">New Requests</span>
+                            <span class="text-gray-600">Pending Requests</span>
                             <span class="font-semibold">{{ $stats['new_requests'] ?? '0' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-200">
+                            <span class="text-gray-600">All Scheduled Appointments</span>
+                            <span class="font-semibold">{{ $stats['scheduled_appointments'] ?? '0' }}</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-gray-600">Doctors Available</span>
@@ -301,6 +392,14 @@
                                     <i class="fas fa-calendar-alt text-sm"></i>
                                 </span>
                                 <span>View Full Schedule</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('assistant.appointments.scheduled') }}" class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-150">
+                                <span class="bg-blue-500 text-white p-2 rounded-full mr-3">
+                                    <i class="fas fa-calendar-check text-sm"></i>
+                                </span>
+                                <span>Scheduled Appointments</span>
                             </a>
                         </li>
                         <li>

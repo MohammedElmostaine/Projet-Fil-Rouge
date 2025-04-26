@@ -278,4 +278,5 @@ class AppointmentSlotsController extends Controller
             })
         ]);
     }
-}
+}   
+

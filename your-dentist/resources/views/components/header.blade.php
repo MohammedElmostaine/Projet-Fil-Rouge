@@ -7,15 +7,35 @@
             </div>
             <div class="hidden md:flex items-center space-x-4">
                 <a href="/" class="text-secondary hover:text-primary transition">Home</a>
-                <a href="#" class="text-secondary hover:text-primary transition">Profile</a>
+                @php
+                    $profileRoute = '#';
+                    $dashboardRoute = '#';
+                    
+                    if (Auth::user()->role === 'admin') {
+                        $profileRoute = route('admin.profile');
+                        $dashboardRoute = route('admin.dashboard');
+                    } elseif (Auth::user()->role === 'doctor') {
+                        $profileRoute = route('doctor.profile');
+                        $dashboardRoute = route('doctor.dashboard');
+                    } elseif (Auth::user()->role === 'assistant') {
+                        $profileRoute = route('assistant.profile');
+                        $dashboardRoute = route('assistant.dashboard');
+                    } else {
+                        $profileRoute = route('profile');
+                        $dashboardRoute = route('dashboard');
+                    }
+                @endphp
+                <a href="{{ $dashboardRoute }}" class="text-secondary hover:text-primary transition">Dashboard</a>
                 <div class="relative group">
                     <button class="flex items-center text-secondary hover:text-primary transition">
                         <span class="mr-1">{{ Auth::user()->name }}</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
                     <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden invisible group-hover:visible transition-all z-50">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Profile Settings</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Medical Records</a>
+                        <a href="{{ $profileRoute }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Profile Settings</a>
+                        @if(Auth::user()->role !== 'admin' && Auth::user()->role !== 'assistant')
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Medical Records</a>
+                        @endif
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Notifications</a>
                         <form action="{{ route('logout') }}" method="POST" class="block">
                             @csrf
@@ -34,8 +54,11 @@
     <div class="hidden md:hidden bg-white border-t" id="mobile-menu">
         <div class="p-4 space-y-4">
             <a href="/" class="block text-secondary hover:text-primary">Home</a>
-            <a href="#" class="block text-secondary hover:text-primary">Profile</a>
-            <a href="#" class="block text-secondary hover:text-primary">Medical Records</a>
+            <a href="{{ $dashboardRoute }}" class="block text-secondary hover:text-primary">Dashboard</a>
+            <a href="{{ $profileRoute }}" class="block text-secondary hover:text-primary">Profile Settings</a>
+            @if(Auth::user()->role !== 'admin' && Auth::user()->role !== 'assistant')
+                <a href="#" class="block text-secondary hover:text-primary">Medical Records</a>
+            @endif
             <a href="#" class="block text-secondary hover:text-primary">Notifications</a>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf

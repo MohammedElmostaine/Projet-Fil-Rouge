@@ -6,6 +6,15 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AppointmentSlotsController;
 use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Doctor\ProfileController as DoctorProfileController;
+use App\Http\Controllers\Assistant\ProfileController as AssistantProfileController;
+use App\Http\Controllers\Doctor\MedicalHistoryController;
 
 // Authentication routes
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
@@ -45,26 +54,26 @@ Route::middleware(['auth'])->group(function () {
         
     // API route to fetch booked slots
     Route::get('/api/booked-slots', [AppointmentSlotsController::class, 'getBookedSlots']);
+
+    // Patient profile routes (for authenticated users)
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Admin Routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function() {
-        return redirect()->route('dashboard');
-    });
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
-    Route::get('/staff/create', function() {
-        return view('admin.staff.create');
-    })->name('staff.create');
+    // Staff management routes
+    Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
+    Route::get('/staff/create', [StaffController::class, 'create'])->name('staff.create');
+    Route::post('/staff', [StaffController::class, 'store'])->name('staff.store');
+    Route::get('/staff/{id}', [StaffController::class, 'show'])->name('staff.show');
+    Route::get('/staff/{id}/edit', [StaffController::class, 'edit'])->name('staff.edit');
+    Route::put('/staff/{id}', [StaffController::class, 'update'])->name('staff.update');
+    Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->name('staff.destroy');
     
-    Route::get('/staff/{id}/edit', function($id) {
-        return view('admin.staff.edit', ['id' => $id]);
-    })->name('staff.edit');
-    
-    Route::get('/staff/{id}', function($id) {
-        return view('admin.staff.show', ['id' => $id]);
-    })->name('staff.show');
-    
+    // Keep other existing admin routes
     Route::get('/appointments', function() {
         return view('admin.appointments.index');
     })->name('appointments.index');
@@ -80,13 +89,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/notifications', function() {
         return view('admin.notifications.index');
     })->name('notifications.index');
+
+    // Admin profile routes
+    Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile');
+    Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
 });
 
 // Doctor Routes
 Route::middleware(['auth', 'role:doctor'])->prefix('doctor')->name('doctor.')->group(function () {
-    Route::get('/dashboard', function() {
-        return redirect()->route('dashboard');
-    });
+    Route::get('/dashboard', [DoctorController::class, 'dashboard'])->name('dashboard');
+    Route::get('/appointments/all', [DoctorController::class, 'allAppointments'])->name('appointments.all');
+    
+    // Appointment management
+    Route::get('/appointments/{id}', [MedicalHistoryController::class, 'create'])->name('appointments.show');
+    Route::post('/appointments/{id}/medical-history', [MedicalHistoryController::class, 'store'])->name('medical-history.store');
     
     Route::get('/prescriptions/create', function() {
         return view('doctor.prescriptions.create');
@@ -103,10 +119,6 @@ Route::middleware(['auth', 'role:doctor'])->prefix('doctor')->name('doctor.')->g
     Route::get('/notifications', function() {
         return view('doctor.notifications.index');
     })->name('notifications.index');
-    
-    Route::get('/appointments/{id}', function($id) {
-        return view('doctor.appointments.show', ['id' => $id]);
-    })->name('appointments.show');
     
     Route::get('/appointments/create', function() {
         return view('doctor.appointments.create');
@@ -131,6 +143,10 @@ Route::middleware(['auth', 'role:doctor'])->prefix('doctor')->name('doctor.')->g
         // Logic to reject appointment
         return redirect()->back()->with('success', 'Appointment rejected');
     })->name('appointments.reject');
+
+    // Doctor profile routes
+    Route::get('/profile', [DoctorProfileController::class, 'edit'])->name('profile');
+    Route::put('/profile', [DoctorProfileController::class, 'update'])->name('profile.update');
 });
 
 // Assistant Routes
@@ -151,18 +167,27 @@ Route::middleware(['auth', 'role:assistant'])->prefix('assistant')->name('assist
         return view('assistant.reminders.send');
     })->name('reminders.send');
     
-    Route::get('/appointments/{id}/schedule', function($id) {
-        return view('assistant.appointments.schedule', ['id' => $id]);
-    })->name('appointments.schedule');
+    // Appointment management routes
+    Route::get('/appointments/pending', [AssistantController::class, 'pendingAppointments'])
+        ->name('appointments.pending');
+    
+    // Scheduled appointments route
+    Route::get('/appointments/scheduled', [AssistantController::class, 'scheduledAppointments'])
+        ->name('appointments.scheduled');
+    
+    // Use the schedule-form route for showing the form and schedule for processing the form
+    Route::get('/appointments/{id}/schedule', [AssistantController::class, 'scheduleAppointmentForm'])
+        ->name('appointments.schedule');
+    
+    Route::post('/appointments/{id}/schedule', [AssistantController::class, 'scheduleAppointment'])
+        ->name('appointments.schedule.store');
+    
+    Route::get('/appointments/{id}/check-in', [AssistantController::class, 'checkInPatient'])
+        ->name('appointments.check-in');
     
     Route::get('/appointments/{id}', function($id) {
         return view('assistant.appointments.show', ['id' => $id]);
     })->name('appointments.show');
-    
-    Route::get('/appointments/{id}/check-in', function($id) {
-        // Logic to check in patient
-        return redirect()->back()->with('success', 'Patient checked in');
-    })->name('appointments.check-in');
     
     Route::post('/appointments/check-in-search', function() {
         // Logic to search for appointment to check in
@@ -177,11 +202,11 @@ Route::middleware(['auth', 'role:assistant'])->prefix('assistant')->name('assist
         return view('assistant.patients.index');
     })->name('patients.index');
     
-    Route::get('/appointments/pending', function() {
-        return view('assistant.appointments.pending');
-    })->name('appointments.pending');
-    
     Route::get('/payments', function() {
         return view('assistant.payments.index');
     })->name('payments.index');
+
+    // Assistant profile routes
+    Route::get('/profile', [AssistantProfileController::class, 'edit'])->name('profile');
+    Route::put('/profile', [AssistantProfileController::class, 'update'])->name('profile.update');
 });
