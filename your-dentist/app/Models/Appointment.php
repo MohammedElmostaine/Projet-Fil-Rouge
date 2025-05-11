@@ -52,6 +52,50 @@ class Appointment extends Model
             }
         );
     }
+    
+    /**
+     * Scope a query to only include pending appointments.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePending($query)
+    {
+        return $query->where('status', 'Pending');
+    }
+    
+    /**
+     * Scope a query to only include scheduled appointments.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeScheduled($query)
+    {
+        return $query->where('status', 'Scheduled');
+    }
+    
+    /**
+     * Scope a query to only include completed appointments.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', 'Completed');
+    }
+    
+    /**
+     * Scope a query to only include today's appointments.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeToday($query)
+    {
+        return $query->whereDate('start_datetime', Carbon::today());
+    }
 
     /**
      * Get the patient associated with the appointment.
