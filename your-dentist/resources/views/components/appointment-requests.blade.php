@@ -54,7 +54,7 @@
             @empty
                 <!-- No requests message -->
                 <div class="text-center py-4">
-                    <p class="text-gray-600">No appointment requests.</p>
+                    <p class="text-gray-600">No pending appointments.</p>
                     <a href="{{ route('appointments.slots') }}" class="mt-2 bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md inline-flex items-center">
                         <i class="fas fa-calendar-plus mr-2"></i> Schedule New Appointment
                     </a>
