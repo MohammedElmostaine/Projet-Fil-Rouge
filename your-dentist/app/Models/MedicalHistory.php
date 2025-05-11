@@ -19,6 +19,7 @@ class MedicalHistory extends Model
         'doctor_id',
         'details',
         'date',
+        'duration',
     ];
 
     /**
