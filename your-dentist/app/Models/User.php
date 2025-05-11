@@ -84,38 +84,45 @@ class User extends Authenticatable
         return $this->role === 'patient';
     }
 
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
-
     /**
      * Get all appointments for the user
      */
     public function appointments()
     {
-        return $this->hasMany(AppointmentRequest::class, 'patient_id')
-            ->when($this->role === 'patient', function ($query) {
-                return $query->where('patient_id', $this->id);
-            })
-            ->when($this->role === 'doctor', function ($query) {
-                return $query->where('doctor_id', $this->id);
-            });
+        if ($this->role === 'patient') {
+            return $this->hasMany(Appointment::class, 'patient_id');
+        } elseif ($this->role === 'doctor') {
+            return $this->hasMany(Appointment::class, 'doctor_id');
+        } elseif ($this->role === 'assistant') {
+            return $this->hasMany(Appointment::class, 'assistant_id');
+        }
+        
+        return $this->hasMany(Appointment::class, 'patient_id')->whereNull('id'); // Empty relation for other roles
     }
 
     /**
-     * Get appointment requests for the user
+     * Get pending appointment requests for the user
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function appointmentRequests()
+    public function pendingAppointments()
     {
         if ($this->role === 'patient') {
-            return $this->hasMany(AppointmentRequest::class, 'patient_id');
+            return $this->hasMany(Appointment::class, 'patient_id')->where('status', 'Pending');
         } elseif ($this->role === 'doctor') {
-            return $this->hasMany(AppointmentRequest::class, 'doctor_id');
+            return $this->hasMany(Appointment::class, 'doctor_id')->where('status', 'Pending');
         }
         
-        return $this->hasMany(AppointmentRequest::class, 'patient_id')->whereNull('id'); // Empty relation for other roles
+        return $this->hasMany(Appointment::class, 'patient_id')->whereNull('id'); // Empty relation for other roles
+    }
+    
+    /**
+     * Self-referential relationship for User model
+     * 
+     * This is needed for the dashboard
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
