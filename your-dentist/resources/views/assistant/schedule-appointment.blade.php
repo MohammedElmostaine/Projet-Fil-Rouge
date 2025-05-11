@@ -109,7 +109,7 @@
                             <input type="date" id="date" name="date" 
                                 class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                 min="{{ date('Y-m-d') }}"
-                                value="{{ old('date', \Carbon\Carbon::parse($appointmentRequest->start_datetime)->format('Y-m-d')) }}"
+                                value="{{ old('date', \Carbon\Carbon::parse($appointment->start_datetime)->format('Y-m-d')) }}"
                                 required>
                             @error('date')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
