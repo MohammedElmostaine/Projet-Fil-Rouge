@@ -24,6 +24,7 @@ class Appointment extends Model
         'end_datetime',
         'description',
         'status',
+        'duration',
     ];
 
     /**
