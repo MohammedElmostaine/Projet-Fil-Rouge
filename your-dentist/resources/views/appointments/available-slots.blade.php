@@ -70,23 +70,63 @@
                 </button>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Time Slot Already Booked Modal -->
-<div id="bookedModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-    <div class="bg-white p-8 rounded-xl shadow-xl max-w-sm w-full mx-4">
-        <div class="text-center">
-            <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-6">
-                <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        <!-- Available Slots for Selected Date -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-4 bg-primary text-white">
+                <h2 class="text-xl font-semibold">Available Slots for {{ $selectedDate->format('l, F j, Y') }}</h2>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">Time Slot Not Available</h3>
-            <p class="text-base text-gray-600 mb-6">This time slot has already been booked. Please select a different time.</p>
-            <button onclick="closeModal()" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-lg px-6 py-3 bg-primary text-base font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
-                OK
-            </button>
+            
+            <div class="p-6">
+                @if(!$hasOfficeHours)
+                    <div class="text-center py-8">
+                        <i class="far fa-calendar-times text-4xl text-gray-400 mb-3 block"></i>
+                        <p class="text-lg text-gray-600">No appointments available on {{ $selectedDate->format('l') }}s.</p>
+                        <p class="text-gray-500 mt-2">Please select a weekday (Monday to Friday).</p>
+                    </div>
+                @elseif($selectedDate->isWeekend())
+                    <div class="text-center py-8">
+                        <i class="far fa-calendar-times text-4xl text-gray-400 mb-3 block"></i>
+                        <p class="text-lg text-gray-600">We are closed on weekends.</p>
+                        <p class="text-gray-500 mt-2">Please select a weekday (Monday to Friday).</p>
+                    </div>
+                @else
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                        @forelse($availableSlots as $slot)
+                            @if(!empty($slot['time']))
+                                @php
+                                    $slotDateTime = \Carbon\Carbon::parse($selectedDate->format('Y-m-d') . ' ' . $slot['time']);
+                                    $timeClass = (substr($slot['time'], 0, 2) >= 9 && substr($slot['time'], 0, 2) < 12) 
+                                                ? 'morning' : 'afternoon';
+                                @endphp
+                                
+                                <!-- DIRECT FORM SUBMISSION - NO JAVASCRIPT NEEDED -->
+                                <form action="{{ route('appointments.book') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="date" value="{{ $selectedDate->format('Y-m-d') }}">
+                                    <input type="hidden" name="time" value="{{ $slot['time'] }}">
+                                    <input type="hidden" name="description" value="Dental appointment on {{ $selectedDate->format('l, F j, Y') }} at {{ $slot['formatted_time'] }}">
+                                    
+                                    <button type="submit" 
+                                        class="w-full p-4 rounded-md text-center bg-accent border border-primary/20 text-primary hover:bg-primary hover:text-white transition-colors font-medium"
+                                    >
+                                        <span class="block text-lg">{{ $slot['formatted_time'] }}</span>
+                                        <span class="text-xs block mt-1">
+                                            <i class="fas fa-check-circle mr-1"></i>Click to Book
+                                        </span>
+                                    </button>
+                                </form>
+                            @endif
+                        @empty
+                            <div class="col-span-full text-center py-8 text-gray-500">
+                                <i class="far fa-clock text-4xl mb-3 block"></i>
+                                <p>No available slots for this date.</p>
+                                <p class="mt-2">Try selecting a different date.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 </div>
