@@ -192,27 +192,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 f.classList.add('bg-white', 'border', 'border-gray-300', 'text-gray-700');
             });
             
-            if (isBooked) {
-                showBookedModal();
-                return;
-            }
+            this.classList.remove('bg-white', 'border', 'border-gray-300', 'text-gray-700');
+            this.classList.add('active', 'bg-accent', 'text-primary');
 
-            // If slot is available, submit the form
-            this.submit();
-        } catch (error) {
-            console.error('Error checking slot availability:', error);
-            this.submit(); // Submit anyway if the check fails
-        }
+            const timeCategory = this.dataset.filter;
+            
+            // Filter time slots
+            document.querySelectorAll('.slot-booking-form').forEach(form => {
+                const slot = form.querySelector('.time-slot');
+                if (timeCategory === 'all' || slot.dataset.timeCategory === timeCategory) {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        });
     });
 });
 
 // Modal functions
-function showBookedModal() {
-    document.getElementById('bookedModal').classList.remove('hidden');
+function showBookingModal(button) {
+    const form = button.closest('form');
+    const dateInput = form.querySelector('input[name="date"]');
+    const timeInput = form.querySelector('input[name="time"]');
+    
+    // Set date and time in modal
+    const date = new Date(dateInput.value);
+    const timeText = button.querySelector('span').textContent.trim();
+    
+    document.getElementById('modal-time').textContent = timeText;
+    document.getElementById('modal-date-input').value = dateInput.value;
+    document.getElementById('modal-time-input').value = timeInput.value;
+    
+    // Show modal
+    document.getElementById('booking-modal').classList.remove('hidden');
 }
 
-function closeModal() {
-    document.getElementById('bookedModal').classList.add('hidden');
+function hideBookingModal() {
+    document.getElementById('booking-modal').classList.add('hidden');
 }
 </script>
 @endpush
+@endsection
