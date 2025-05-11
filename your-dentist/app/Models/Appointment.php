@@ -25,6 +25,7 @@ class Appointment extends Model
         'description',
         'status',
         'duration',
+        'created_by_role',
     ];
 
     /**
