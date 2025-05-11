@@ -74,6 +74,7 @@ class MedicalHistoryController extends Controller
         $request->validate([
             'details' => 'required|string',
             'patient_id' => 'required|exists:users,id',
+            'duration' => 'nullable|integer|min:15|max:120',
         ]);
         
         // Create the medical history
@@ -82,6 +83,7 @@ class MedicalHistoryController extends Controller
             'doctor_id' => Auth::id(),
             'details' => $request->details,
             'date' => Carbon::now()->toDateString(),
+            'duration' => $request->duration ?? $appointment->duration ?? 30,
         ]);
         
         $medicalHistory->save();
