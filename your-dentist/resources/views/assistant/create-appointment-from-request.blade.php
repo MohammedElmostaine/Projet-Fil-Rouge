@@ -151,7 +151,7 @@
                         </div>
                         
                         <div class="flex justify-end">
-                            <a href="{{ route('assistant.appointments.pending') }}" class="mr-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
+                            <a href="{{ route('assistant.appointments.requests') }}" class="mr-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
                                 Cancel
                             </a>
                             <button type="submit" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded font-medium">
