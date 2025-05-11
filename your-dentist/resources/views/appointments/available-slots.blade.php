@@ -131,49 +131,65 @@
     </div>
 </div>
 
-@if(app()->environment('local'))
-<div class="mt-8 p-4 bg-gray-100 rounded-lg">
-    <h3 class="text-lg font-semibold text-gray-700">Debug Information</h3>
-    <div class="mt-2">
-        <p>Selected Date: {{ $selectedDate->format('Y-m-d') }}</p>
-        <p>Day of Week: {{ $dayOfWeek }} (1 = Monday, 7 = Sunday)</p>
-        <p>Has Office Hours: {{ $hasOfficeHours ? 'Yes' : 'No' }}</p>
-        <p>Booked Slots Count: {{ count($bookedSlots) }}</p>
-        <p>Available Slots Count: {{ count($availableSlots) }}</p>
-        
-        @if(count($availableSlots) > 0 && isset($availableSlots[0]['all_debug']))
-            <h4 class="mt-3 font-semibold">Debug Log:</h4>
-            <pre class="mt-1 bg-white p-2 rounded text-xs">{{ json_encode($availableSlots[0]['all_debug'], JSON_PRETTY_PRINT) }}</pre>
-        @endif
+<!-- Booking Modal -->
+<div id="booking-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden">
+        <div class="bg-primary text-white p-4">
+            <h3 class="text-xl font-semibold">Confirm Your Appointment</h3>
+        </div>
+        <div class="p-6">
+            <p class="mb-4 text-gray-600">You are about to book an appointment for:</p>
+            <div class="mb-6 p-4 bg-gray-50 rounded-md">
+                <div class="mb-2">
+                    <span class="text-gray-500">Date:</span>
+                    <span class="font-medium text-gray-800" id="modal-date">{{ $selectedDate->format('l, F j, Y') }}</span>
+                </div>
+                <div class="mb-2">
+                    <span class="text-gray-500">Time:</span>
+                    <span class="font-medium text-gray-800" id="modal-time"></span>
+                </div>
+            </div>
+            
+            <form id="final-booking-form" action="{{ route('appointments.book') }}" method="POST">
+                @csrf
+                <input type="hidden" name="date" id="modal-date-input">
+                <input type="hidden" name="time" id="modal-time-input">
+                
+                <div class="mb-4">
+                    <label for="modal-description" class="block text-sm font-semibold text-secondary mb-2">Reason for Visit</label>
+                    <textarea name="description" id="modal-description" rows="3" 
+                        class="w-full border border-gray-300 rounded-md p-3 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                        placeholder="Please describe your dental concern or reason for appointment"
+                        required minlength="10" maxlength="500"></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Please provide at least 10 characters</p>
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="hideBookingModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-md">
+                        Book Appointment
+            </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-@endif
-
-@endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const timeSelect = document.getElementById('time');
-    const appointmentForm = document.getElementById('appointmentForm');
-
-    // Form submission validation
-    appointmentForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const selectedDate = formData.get('date');
-        const selectedTime = formData.get('time');
-
-        // Check if slot is still available
-        try {
-            const response = await fetch(`/api/booked-slots?date=${selectedDate}`);
-            const data = await response.json();
-            
-            // Check if the selected time is in the booked slots
-            const isBooked = data.bookedSlots.some(slot => {
-                const slotTime = new Date(slot.start_datetime).toTimeString().substring(0, 5);
-                return slotTime === selectedTime;
+    // Time filter functionality
+    const timeFilters = document.querySelectorAll('.time-filter');
+    const timeSlots = document.querySelectorAll('.time-slot');
+    
+    timeFilters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            // Update active state
+            timeFilters.forEach(f => {
+                f.classList.remove('active', 'bg-accent', 'text-primary');
+                f.classList.add('bg-white', 'border', 'border-gray-300', 'text-gray-700');
             });
             
             if (isBooked) {
