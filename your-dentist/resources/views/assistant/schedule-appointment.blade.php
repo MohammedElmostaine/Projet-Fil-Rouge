@@ -51,21 +51,21 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <p class="text-sm text-gray-600 mb-1">Requested Date & Time</p>
-                            <p>{{ \Carbon\Carbon::parse($appointmentRequest->start_datetime)->format('M d, Y - g:i A') }}</p>
+                            <p>{{ \Carbon\Carbon::parse($appointment->start_datetime)->format('M d, Y - g:i A') }}</p>
                         </div>
                         <div>
                             <p class="text-sm text-gray-600 mb-1">Status</p>
-                            <p><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">{{ $appointmentRequest->status }}</span></p>
+                            <p><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">{{ $appointment->status }}</span></p>
                         </div>
                         <div class="md:col-span-2">
                             <p class="text-sm text-gray-600 mb-1">Description</p>
-                            <p>{{ $appointmentRequest->description }}</p>
+                            <p>{{ $appointment->description }}</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Schedule Form -->
-                <form action="{{ route('assistant.appointments.schedule.store', $appointmentRequest->id) }}" method="POST">
+                <form action="{{ route('assistant.appointments.schedule.store', $appointment->id) }}" method="POST">
                     @csrf
                     
                     <h3 class="text-lg font-semibold text-secondary mb-4">Schedule Appointment</h3>
