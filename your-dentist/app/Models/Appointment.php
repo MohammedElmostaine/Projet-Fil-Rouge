@@ -129,4 +129,27 @@ class Appointment extends Model
         return $this->hasOne(MedicalHistory::class, 'patient_id', 'patient_id')
             ->whereDate('date', $this->start_datetime->toDateString());
     }
+    
+    /**
+     * Get the status color for UI display.
+     */
+    public function getStatusColorAttribute()
+    {
+        switch ($this->status) {
+            case 'Pending':
+                return 'yellow';
+            case 'Scheduled':
+                return 'blue';
+            case 'In Progress':
+                return 'indigo';
+            case 'Completed':
+                return 'green';
+            case 'Cancelled':
+                return 'red';
+            case 'Rejected':
+                return 'red';
+            default:
+                return 'gray';
+        }
+    }
 }
