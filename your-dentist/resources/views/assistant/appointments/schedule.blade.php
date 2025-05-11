@@ -5,7 +5,7 @@
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="mb-8">
-            <a href="{{ route('assistant.appointments.pending') }}" class="text-primary hover:text-primary-dark">
+            <a href="{{ route('assistant.appointments.requests') }}" class="text-primary hover:text-primary-dark">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Pending Appointments
             </a>
         </div>
