@@ -33,9 +33,23 @@ class MedicalHistoryController extends Controller
             ->whereDate('date', Carbon::parse($appointment->start_datetime)->toDateString())
             ->first();
             
+        // Get patient's previous medical history records
+        $patientHistory = MedicalHistory::where('patient_id', $appointment->patient_id)
+            ->with('doctor')
+            ->where(function($query) use ($appointment) {
+                // Exclude the current appointment's history if it exists
+                if (Carbon::parse($appointment->start_datetime)->isToday()) {
+                    $query->whereDate('date', '!=', Carbon::today());
+                }
+            })
+            ->orderBy('date', 'desc')
+            ->limit(5)
+            ->get();
+            
         return view('doctor.appointments.show', [
             'appointment' => $appointment,
-            'medicalHistory' => $medicalHistory
+            'medicalHistory' => $medicalHistory,
+            'patientHistory' => $patientHistory
         ]);
     }
 
