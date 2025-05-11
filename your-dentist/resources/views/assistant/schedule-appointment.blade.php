@@ -22,24 +22,24 @@
                     
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 rounded-full bg-gray-300 mr-4 overflow-hidden">
-                            <img src="{{ $appointmentRequest->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" 
-                                alt="{{ $appointmentRequest->patient->name ?? 'Patient' }}" 
+                            <img src="{{ $appointment->patient->profile_photo ?? 'https://randomuser.me/api/portraits/men/1.jpg' }}" 
+                                alt="{{ $appointment->patient->name ?? 'Patient' }}" 
                                 class="w-full h-full object-cover">
                         </div>
                         <div>
-                            <p class="font-semibold">{{ $appointmentRequest->patient->name ?? 'Unknown Patient' }}</p>
-                            <p class="text-sm text-gray-600">Patient ID: {{ $appointmentRequest->patient_id }}</p>
+                            <p class="font-semibold">{{ $appointment->patient->name ?? 'Unknown Patient' }}</p>
+                            <p class="text-sm text-gray-600">Patient ID: {{ $appointment->patient_id }}</p>
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <p class="text-sm text-gray-600 mb-1">Email</p>
-                            <p>{{ $appointmentRequest->patient->email ?? 'N/A' }}</p>
+                            <p>{{ $appointment->patient->email ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <p class="text-sm text-gray-600 mb-1">Phone</p>
-                            <p>{{ $appointmentRequest->patient->phone ?? 'N/A' }}</p>
+                            <p>{{ $appointment->patient->phone ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
