@@ -45,9 +45,7 @@
                 <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
                     <i class="fas fa-filter mr-1"></i> Filter
                 </button>
-                <button class="bg-white text-primary hover:bg-gray-100 px-3 py-1 rounded text-sm">
-                    <i class="fas fa-download mr-1"></i> Export
-                </button>
+                
             </div>
         </div>
         
@@ -60,6 +58,7 @@
                             <th class="py-3 px-4 text-left">Patient</th>
                             <th class="py-3 px-4 text-left">Requested Service</th>
                             <th class="py-3 px-4 text-left">Preferred Date</th>
+                            <th class="py-3 px-4 text-left">Created By</th>
                             <th class="py-3 px-4 text-left">Status</th>
                             <th class="py-3 px-4 text-left">Actions</th>
                         </tr>
@@ -79,6 +78,21 @@
                                 </td>
                                 <td class="py-3 px-4">{{ $request->description }}</td>
                                 <td class="py-3 px-4">{{ \Carbon\Carbon::parse($request->start_datetime)->format('M d, Y - g:i A') }}</td>
+                                <td class="py-3 px-4">
+                                    @if($request->created_by_role == 'doctor')
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                                            Doctor
+                                        </span>
+                                    @elseif($request->created_by_role == 'assistant')
+                                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">
+                                            Assistant
+                                        </span>
+                                    @else
+                                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">
+                                            Patient
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="py-3 px-4">
                                     <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">
                                         {{ $request->status }}
