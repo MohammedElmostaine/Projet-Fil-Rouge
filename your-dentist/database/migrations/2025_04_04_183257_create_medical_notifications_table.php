@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('message');
-            $table->enum('type', ['Email', 'Push', 'SMS']);
-            $table->dateTime('date_time');
-            $table->timestamps();
-        });
+        // No need to create notifications table as we don't want notifications in our project
+        if (Schema::hasTable('notifications')) {
+            Schema::dropIfExists('notifications');
+        }
     }
 
     /**
