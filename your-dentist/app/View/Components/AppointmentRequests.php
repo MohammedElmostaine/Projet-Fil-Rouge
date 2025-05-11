@@ -4,7 +4,6 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 use Illuminate\Support\Facades\Auth;
-use App\Models\AppointmentRequest;
 
 class AppointmentRequests extends Component
 {
