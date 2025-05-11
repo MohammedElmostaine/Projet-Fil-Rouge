@@ -269,30 +269,13 @@
             </div>
         </div>
         
-        <!-- Doctor Specialization -->
-        @if($user->role === 'doctor')
-        <div class="border-b pb-6">
-            <h3 class="text-lg font-medium mb-4 text-primary-800">Professional Information</h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="specialization" class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-                    <input type="text" id="specialization" name="specialization" value="{{ $user->specialization ?? '' }}" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
-                    @error('specialization')
-                        <p class="text-red-500 text-xs mt-1">{{ $message ?? 'Please enter your specialization' }}</p>
-                    @enderror
-                </div>
-            </div>
-        </div>
-        @endif
-        
         <!-- Form Actions -->
-        <div class="flex justify-end space-x-3">
-            <a href="{{ $cancelRoute }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+        <div class="flex justify-end space-x-4 mt-6">
+            <a href="{{ $cancelRoute }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                 Cancel
             </a>
-            <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition">
+            
+            <button type="submit" class="px-4 py-2 bg-primary-600 border border-transparent rounded-md font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                 Save Changes
             </button>
         </div>
