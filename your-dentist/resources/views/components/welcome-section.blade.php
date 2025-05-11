@@ -12,11 +12,8 @@
             </div>
         </div>
         <div class="mt-4 flex flex-wrap gap-4">
-            <a href="{{ route('appointments.slots') }}" class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-md inline-flex items-center">
+            <a href="{{ route('appointments.slots') }}" class="bg-[#075985] hover:bg-[#0369a1] text-white px-4 py-2 rounded-md inline-flex items-center">
                 <i class="fas fa-calendar-plus mr-2"></i> Book Appointment
-            </a>
-            <a href="#" class="bg-white border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-md inline-flex items-center">
-                <i class="fas fa-message mr-2"></i> Message Your Dentist
             </a>
         </div>
     </div>
