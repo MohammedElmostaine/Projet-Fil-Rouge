@@ -34,6 +34,57 @@ class AdminController extends Controller
     }
 
     /**
+     * Display appointments management page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function appointments()
+    {
+        // Get all appointments with pagination
+        $appointments = Appointment::with(['patient', 'doctor', 'assistant'])
+            ->orderBy('start_datetime', 'desc')
+            ->paginate(15);
+
+        return view('admin.appointments.index', compact('appointments'));
+    }
+
+    /**
+     * Display reports page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function reports()
+    {
+        // Get basic statistics for reports
+        $stats = $this->getDashboardStats();
+        
+        // Additional report data could be added here
+        
+        return view('admin.reports.index', compact('stats'));
+    }
+
+    /**
+     * Display settings page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function settings()
+    {
+        // Get current system settings
+        // This would typically come from a settings table or config
+        $settings = [
+            'clinic_name' => 'YourDentist Clinic',
+            'clinic_address' => '123 Dental Street, Medical City',
+            'clinic_phone' => '123-456-7890',
+            'clinic_email' => 'contact@yourdentist.com',
+            'office_hours' => '9:00 AM - 5:00 PM',
+            'appointment_duration' => 60, // minutes
+        ];
+        
+        return view('admin.settings.index', compact('settings'));
+    }
+
+    /**
      * Get dashboard statistics.
      *
      * @return array
