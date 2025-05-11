@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        // No need to recreate the table in down() since we're removing notifications entirely
     }
 };
