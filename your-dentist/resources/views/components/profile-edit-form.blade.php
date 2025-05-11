@@ -1,3 +1,4 @@
+<!-- Generic Profile Edit Form Component -->
 <div class="bg-white rounded-lg shadow-sm p-6">
     <h2 class="text-2xl font-semibold mb-6">Edit Profile</h2>
     
@@ -52,8 +53,9 @@
                     @enderror
                 </div>
                 
-                <!-- Gender -->
+                <!-- Patient-specific fields -->
                 @if($user->role === 'patient')
+                    <!-- Gender -->
                 <div>
                     <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
                     <select id="gender" name="gender" 
@@ -63,7 +65,7 @@
                         <option value="female" {{ $user->gender === 'female' ? 'selected' : '' }}>Female</option>
                     </select>
                     @error('gender')
-                        <p class="text-red-500 text-xs mt-1">{{ $message ?? 'Please select a gender' }}</p>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
