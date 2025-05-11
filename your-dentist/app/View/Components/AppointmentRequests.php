@@ -13,8 +13,8 @@ class AppointmentRequests extends Component
     {
         $user = Auth::user();
         if ($user) {
-            $this->appointmentRequests = $user->appointmentRequests()
-                ->with(['doctor.user'])
+            $this->appointmentRequests = $user->pendingAppointments()
+                ->with(['doctor'])
                 ->orderBy('created_at', 'desc')
                 ->take(5)
                 ->get();
