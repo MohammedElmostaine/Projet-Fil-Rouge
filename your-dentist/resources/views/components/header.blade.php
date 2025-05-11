@@ -2,8 +2,8 @@
     <div class="container mx-auto px-4 py-4">
         <div class="flex justify-between items-center">
             <div class="flex items-center">
-                <i class="fas fa-tooth text-primary text-3xl mr-2"></i>
-                <span class="text-2xl font-bold text-primary">DentalCare</span>
+                <i class="fas fa-tooth text-white text-3xl mr-2"></i>
+                <span class="text-2xl font-bold text-white">DentalCare</span>
             </div>
             <div class="hidden md:flex items-center space-x-4">
                 <a href="/" class="text-secondary hover:text-primary transition">Home</a>
@@ -36,7 +36,6 @@
                         @if(Auth::user()->role !== 'admin' && Auth::user()->role !== 'assistant')
                             <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Medical Records</a>
                         @endif
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white">Notifications</a>
                         <form action="{{ route('logout') }}" method="POST" class="block">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-600 hover:text-white">Logout</button>
@@ -59,7 +58,6 @@
             @if(Auth::user()->role !== 'admin' && Auth::user()->role !== 'assistant')
                 <a href="#" class="block text-secondary hover:text-primary">Medical Records</a>
             @endif
-            <a href="#" class="block text-secondary hover:text-primary">Notifications</a>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full text-left text-red-600 hover:text-red-700">Logout</button>
