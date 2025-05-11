@@ -11,29 +11,13 @@
             <p class="text-gray-600">Select a date and available time slot to schedule your dental appointment.</p>
                 </div>
 
-                <!-- Appointment Booking Form -->
-                <div class="max-w-3xl mx-auto">
-                    <!-- Date Selection Form -->
-                    <form id="dateSelectionForm" action="{{ route('appointments.slots') }}" method="GET" class="mb-8">
-                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                            <label for="date" class="block text-base font-semibold text-gray-700 mb-3">
-                                <i class="fas fa-calendar-alt mr-2 text-primary"></i>Select Date
-                            </label>
-                            <input type="date" 
-                                id="date" 
-                                name="date" 
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-gray-700"
-                                min="{{ date('Y-m-d') }}"
-                                value="{{ old('date', $selectedDate->format('Y-m-d')) }}"
-                                onchange="document.getElementById('dateSelectionForm').submit()"
-                                required>
+        <!-- Alert Messages -->
+        @if(session('success'))
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm" role="alert">
+                <p class="font-medium">Success!</p>
+                <p>{{ session('success') }}</p>
                         </div>
-                    </form>
-
-                    <!-- Appointment Booking Form -->
-                    <form id="appointmentForm" action="{{ route('appointments.book') }}" method="POST" class="space-y-8">
-                        @csrf
-                        <input type="hidden" name="date" value="{{ old('date', $selectedDate->format('Y-m-d')) }}">
+        @endif
 
                         <!-- Error Messages -->
                         @if(session('error'))
