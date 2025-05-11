@@ -36,6 +36,7 @@ class Appointment extends Model
     protected $casts = [
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
+        'duration' => 'integer',
     ];
 
     /**
