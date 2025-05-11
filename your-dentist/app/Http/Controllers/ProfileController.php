@@ -34,28 +34,17 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         
-        // Validate the basic user info based on actual database columns
+        // Validate common fields for all users
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => ['nullable', 'string', 'max:20'],
-            'date_of_birth' => ['nullable', 'date'],
-            'gender' => ['nullable', 'string', 'in:male,female'],
         ]);
         
-        // Update user data
+        // Update common user data
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->phone = $validated['phone'];
-        
-        // Update patient-specific fields if they exist
-        if (isset($validated['date_of_birth'])) {
-            $user->date_of_birth = $validated['date_of_birth'];
-        }
-        
-        if (isset($validated['gender'])) {
-            $user->gender = $validated['gender'];
-        }
         
         // Handle password update if provided
         if ($request->filled('current_password') && $request->filled('password')) {
