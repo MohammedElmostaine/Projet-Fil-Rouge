@@ -75,12 +75,164 @@
                     <input type="date" id="date_of_birth" name="date_of_birth" value="{{ $user->date_of_birth ?? '' }}" 
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
                     @error('date_of_birth')
-                        <p class="text-red-500 text-xs mt-1">{{ $message ?? 'Please enter a valid date' }}</p>
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <!-- Address -->
+                    <div class="md:col-span-2">
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                        <input type="text" id="address" name="address" value="{{ $user->address ?? '' }}" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        @error('address')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <!-- Emergency Contact -->
+                    <div>
+                        <label for="emergency_contact" class="block text-sm font-medium text-gray-700 mb-1">Emergency Contact</label>
+                        <input type="text" id="emergency_contact" name="emergency_contact" value="{{ $user->emergency_contact ?? '' }}" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        @error('emergency_contact')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <!-- Emergency Phone -->
+                    <div>
+                        <label for="emergency_phone" class="block text-sm font-medium text-gray-700 mb-1">Emergency Phone</label>
+                        <input type="tel" id="emergency_phone" name="emergency_phone" value="{{ $user->emergency_phone ?? '' }}" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        @error('emergency_phone')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 @endif
             </div>
         </div>
+        
+        <!-- Doctor-specific section -->
+        @if($user->role === 'doctor')
+        <div class="border-b pb-6">
+            <h3 class="text-lg font-medium mb-4 text-primary-800">Professional Information</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Specialization -->
+                <div>
+                    <label for="specialization" class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                    <input type="text" id="specialization" name="specialization" value="{{ $user->specialization ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('specialization')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Experience Years -->
+                <div>
+                    <label for="experience_years" class="block text-sm font-medium text-gray-700 mb-1">Years of Experience</label>
+                    <input type="number" id="experience_years" name="experience_years" value="{{ $user->experience_years ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('experience_years')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Qualifications -->
+                <div>
+                    <label for="qualifications" class="block text-sm font-medium text-gray-700 mb-1">Qualifications</label>
+                    <input type="text" id="qualifications" name="qualifications" value="{{ $user->qualifications ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('qualifications')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- License Number -->
+                <div>
+                    <label for="license_number" class="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+                    <input type="text" id="license_number" name="license_number" value="{{ $user->license_number ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('license_number')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+        @endif
+        
+        <!-- Assistant-specific section -->
+        @if($user->role === 'assistant')
+        <div class="border-b pb-6">
+            <h3 class="text-lg font-medium mb-4 text-primary-800">Professional Information</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Position -->
+                <div>
+                    <label for="position" class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                    <input type="text" id="position" name="position" value="{{ $user->position ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('position')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Certification -->
+                <div>
+                    <label for="certification" class="block text-sm font-medium text-gray-700 mb-1">Certification</label>
+                    <input type="text" id="certification" name="certification" value="{{ $user->certification ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('certification')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Experience Years -->
+                <div>
+                    <label for="experience_years" class="block text-sm font-medium text-gray-700 mb-1">Years of Experience</label>
+                    <input type="number" id="experience_years" name="experience_years" value="{{ $user->experience_years ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('experience_years')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+        @endif
+        
+        <!-- Admin-specific section -->
+        @if($user->role === 'admin')
+        <div class="border-b pb-6">
+            <h3 class="text-lg font-medium mb-4 text-primary-800">Administrative Information</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Admin Level -->
+                <div>
+                    <label for="admin_level" class="block text-sm font-medium text-gray-700 mb-1">Admin Level</label>
+                    <select id="admin_level" name="admin_level" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Select level</option>
+                        <option value="junior" {{ $user->admin_level === 'junior' ? 'selected' : '' }}>Junior Admin</option>
+                        <option value="senior" {{ $user->admin_level === 'senior' ? 'selected' : '' }}>Senior Admin</option>
+                        <option value="super" {{ $user->admin_level === 'super' ? 'selected' : '' }}>Super Admin</option>
+                    </select>
+                    @error('admin_level')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Department -->
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                    <input type="text" id="department" name="department" value="{{ $user->department ?? '' }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    @error('department')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+        @endif
         
         <!-- Password Section -->
         <div class="border-b pb-6">
