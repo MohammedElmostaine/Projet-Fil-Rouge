@@ -11,12 +11,17 @@ class ProfileController extends Controller
 {
     /**
      * Show the form for editing the user's profile.
+     * This should be overridden by role-specific profile controllers.
      *
      * @return \Illuminate\View\View
      */
     public function edit()
     {
-        return view('profile');
+        $user = Auth::user();
+        $role = $user->role;
+        
+        // Default view path based on role
+        return view("{$role}.profile.edit", compact('user'));
     }
 
     /**
