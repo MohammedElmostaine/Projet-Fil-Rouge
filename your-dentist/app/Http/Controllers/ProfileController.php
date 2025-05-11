@@ -63,6 +63,10 @@ class ProfileController extends Controller
         
         $user->save();
         
-        return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+        // Dynamic redirect based on role
+        $role = $user->role;
+        $redirectRoute = ($role !== 'patient') ? "{$role}.profile" : "profile";
+        
+        return redirect()->route($redirectRoute)->with('success', 'Profile updated successfully.');
     }
 } 
