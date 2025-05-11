@@ -1,16 +1,14 @@
-@extends('layouts.home')
+@extends('layouts.dashboard')
 
-@section('title', 'Book Appointment')
+@section('title', 'Available Appointment Slots')
 
 @section('content')
-<div class="py-12 bg-gray-50">
+<div class="py-6">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
-            <div class="p-8">
                 <!-- Header -->
-                <div class="mb-10 text-center">
-                    <h2 class="text-3xl font-bold text-gray-900">Book an Appointment</h2>
-                    <p class="mt-3 text-lg text-gray-600">Select your preferred date and time for your dental appointment</p>
+        <div class="mb-6">
+            <h1 class="text-2xl font-semibold text-gray-800">Available Appointment Slots</h1>
+            <p class="text-gray-600">Select a date and available time slot to schedule your dental appointment.</p>
                 </div>
 
                 <!-- Appointment Booking Form -->
