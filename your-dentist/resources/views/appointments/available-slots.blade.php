@@ -37,47 +37,37 @@
                             </div>
                         @endif
 
-                        <!-- Time Selection -->
-                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                            <label for="time" class="block text-base font-semibold text-gray-700 mb-3">
-                                <i class="fas fa-clock mr-2 text-primary"></i>Select Time
-                            </label>
-                            <select id="time" 
-                                name="time" 
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-gray-700"
-                                required>
-                                <option value="">Choose a time slot</option>
-                                @foreach($availableSlots as $slot)
-                                    <option value="{{ $slot['time'] }}" {{ old('time') == $slot['time'] ? 'selected' : '' }}>
-                                        {{ $slot['formatted_time'] }}
-                                    </option>
-                                @endforeach
-                            </select>
+        <!-- Date Selection -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <form action="{{ route('appointments.slots') }}" method="GET" class="flex flex-col sm:flex-row gap-4 items-end">
+                <div class="w-full sm:w-1/2">
+                    <label for="date" class="block text-sm font-semibold text-secondary mb-2">Select Date</label>
+                    <input type="date" id="date" name="date" 
+                           value="{{ $selectedDate->format('Y-m-d') }}" 
+                           min="{{ now()->format('Y-m-d') }}"
+                           class="w-full rounded-md border border-gray-300 px-4 py-2.5 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
                         </div>
-
-                        <!-- Description -->
-                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                            <label for="description" class="block text-base font-semibold text-gray-700 mb-3">
-                                <i class="fas fa-notes-medical mr-2 text-primary"></i>Appointment Description
-                            </label>
-                            <textarea id="description" 
-                                name="description" 
-                                rows="4" 
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 text-gray-700"
-                                placeholder="Please describe your dental concern or the type of appointment you need..."
-                                required>{{ old('description') }}</textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="flex justify-end">
-                            <button type="submit" 
-                                class="inline-flex items-center px-6 py-3 border border-transparent rounded-lg text-primary-600 font-medium bg-primary hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 hover:text-white shadow-lg">
-                                <i class="fas fa-calendar-check mr-2"></i>
-                                Book Appointment
+                <div class="w-full sm:w-1/2">
+                    <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white py-2.5 px-4 rounded-md transition duration-200">
+                        <i class="fas fa-calendar-check mr-2"></i> View Available Slots
                             </button>
                         </div>
                     </form>
                 </div>
+
+        <!-- Time Filter -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold text-secondary mb-3">Filter by Time</h2>
+            <div class="flex flex-wrap gap-2" id="time-filters">
+                <button type="button" data-filter="all" class="time-filter px-4 py-2 bg-accent text-primary rounded-full text-sm font-medium hover:bg-accent/80 active">
+                    All Times
+                </button>
+                <button type="button" data-filter="morning" class="time-filter px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50">
+                    Morning (9AM - 12PM)
+                </button>
+                <button type="button" data-filter="afternoon" class="time-filter px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50">
+                    Afternoon (1PM - 5PM)
+                </button>
             </div>
         </div>
     </div>
