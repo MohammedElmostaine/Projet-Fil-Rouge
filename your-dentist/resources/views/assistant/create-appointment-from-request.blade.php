@@ -5,7 +5,7 @@
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="mb-8">
-            <a href="{{ route('assistant.appointments.pending') }}" class="text-primary hover:text-primary-dark">
+            <a href="{{ route('assistant.appointments.requests') }}" class="text-primary hover:text-primary-dark">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Pending Appointments
             </a>
         </div>
@@ -29,7 +29,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-2">Request Not Found</h3>
                         <p class="text-gray-600">The appointment request couldn't be found.</p>
-                        <a href="{{ route('assistant.appointments.pending') }}" class="mt-4 inline-block bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded">
+                        <a href="{{ route('assistant.appointments.requests') }}" class="mt-4 inline-block bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded">
                             Back to Pending Requests
                         </a>
                     </div>
